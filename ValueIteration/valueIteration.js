@@ -59,14 +59,20 @@ class ValueIteration {
 		this.log();
 
 		this.matrix = []
+		this.value_matrix = []
 		for(let i = 0; i < str.length; i++) {
 			this.matrix.push([]);
+			this.value_matrix.push([]);
 			for(let j = 0; j < str[0].length; j++) {
-				this.matrix[i].push(str[i].charAt(j));
+				this.matrix[i].push(parseInt(str[i].charAt(j),16));
+				this.value_matrix[i].push(-1);
 			}
 		}
 		
-		this.erase_next();
+		//this.erase_next();
+		this.erase_maze();
+		this.place_goal();
+		this.draw_value_matrix();
 	}
 
 	draw_grid() {
@@ -106,7 +112,8 @@ class ValueIteration {
 		this.ctx.fillStyle = style;
 	}
 	erase_digit(i,j) {
-		let digit = parseInt(str[i].charAt(j),16);
+		//let digit = parseInt(str[i].charAt(j),16);
+		let digit = this.matrix[i][j];
  		if(digit & 1){
 			this.erase_top(i,j);
 			//console.log(i, j, "top", String.fromCharCode(codes[digit]), digit);
@@ -136,11 +143,38 @@ class ValueIteration {
 		let i = (this.counter - j) / this.cols;
 
 		this.erase_digit(i,j);
-		console.log(i,j);
+		//console.log(i,j);
 		this.counter++;
 
 		if(this.counter < this.rows * this.cols) {
 			requestAnimationFrame(() => this.erase_next());
+		}
+	}
+	place_goal() {
+		let i = Math.floor(Math.random() * this.rows);
+		let j = Math.floor(Math.random() * this.cols);
+
+		console.log("goal: ", i, j);
+		this.value_matrix[i][j] = 0;
+		console.log(this.value_matrix);
+	}
+	draw_value_matrix() {
+		for(let i = 0; i < this.rows; i++) {
+			for(let j = 0; j < this.cols; j++) {
+				let value = this.value_matrix[i][j];
+				if(value == 0) {
+					let style = this.ctx.fillStyle;
+					console.log(style);
+					this.ctx.fillStyle = 'yellow';
+					this.ctx.fillRect((j+1) * this.col_step + this.ctx.lineWidth / 2,
+								  (i+1) * this.row_step + this.ctx.lineWidth / 2,
+								  this.col_step - this.ctx.lineWidth,
+								  this.row_step - this.ctx.lineWidth);
+					this.ctx.fillStyle = style;
+					console.log(this.ctx.fillStyle);
+				}
+				this.ctx.fillText(value, (j+1.25) * this.col_step, (i+1.7) * this.row_step);
+			}
 		}
 	}
 	log() {
