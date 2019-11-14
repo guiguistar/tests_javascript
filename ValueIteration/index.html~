@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="index.css">
+    <title>Guillaume Roux</title>
+  </head>
+  <body class="blanc_casse">
+    <main>
+	  <section id="enseignement">
+		<h1><a href="./Enseignement">Enseignement</a></h1>
+		<div class="fond">
+		</div>
+	  </section>
+	  <section id="cv">
+		<h1><a href="./CV">CV</a></h1>
+	  </section>
+	  <section id="foi">
+		<h1><a href="http://chapelet.org">Foi</a></h1>
+	  </section>
+	  <!--section id="vous">
+		<h1><a href="">A propos de vous</a></h1>
+	  </section-->
+	  <!--img src="test.svg" alt="Test"/-->
+	</main>
+	<script src="index.js"></script>
+  </body>
+</html>

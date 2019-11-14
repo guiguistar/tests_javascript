@@ -1,0 +1,5 @@
+class valueIteration {
+	constructor() {
+		this.canvas = document.getElementById('main_canvas');
+	}
+}
