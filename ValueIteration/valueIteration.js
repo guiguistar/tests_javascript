@@ -58,6 +58,14 @@ class ValueIteration {
 		this.draw_grid();
 		this.log();
 
+		this.matrix = []
+		for(let i = 0; i < str.length; i++) {
+			this.matrix.push([]);
+			for(let j = 0; j < str[0].length; j++) {
+				this.matrix[i].push(str[i].charAt(j));
+			}
+		}
+		
 		this.erase_next();
 	}
 
