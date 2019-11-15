@@ -1,3 +1,18 @@
+const actions = {
+	'UP': 'Up',
+	'DOWN': 'Down',
+	'LEFT': 'Left',
+	'RIGHT': 'Right',
+	'NO_MOVE': 'NoMove',
+}
+
+const ways = {
+	'UP': 1,
+	'RIGH': 2,
+	'DOWN': 4,
+	'LEFT': 8,
+}
+
 var str = ["6C6AAAEAAC6AC2EC686EC2EAAAAC2C",
 		   "15542C3AC53C3C553A953A946AA96D",
 		   "6D57C3AC13C3C3D3AAC3C6E956C6D1",
@@ -61,14 +76,19 @@ class ValueIteration {
 		this.matrix = []
 		this.reward_matrix = []
 		this.value_matrix = []
+		this.new_value_matrix = [];
+		
 		for(let i = 0; i < str.length; i++) {
 			this.matrix.push([]);
 			this.reward_matrix.push([]);
 			this.value_matrix.push([]);
+			this.new_value_matrix.push([]);
+			
 			for(let j = 0; j < str[0].length; j++) {
 				this.matrix[i].push(parseInt(str[i].charAt(j),16));
 				this.reward_matrix[i].push(-1);
 				this.value_matrix[i].push(0);
+				this.new_value_matrix[i].push(0);
 			}
 		}
 
@@ -88,6 +108,70 @@ class ValueIteration {
 		this.draw_reward_matrix();
 	}
 
+	helper(i, j, action, gamma, values) {
+		let move = this.transition(i,j,action);
+		let new_value = this.reward_matrix[i][j] + gamma * this.value_matrix[move[0]][move[1]];
+		values.push(new_value);
+	}
+
+	iterate(n) {
+		for(let i = 0; i < n; i++) {
+			this.iteration(1);
+			this.clear_and_draw_buffer();
+			this.draw_value_matrix();
+		}
+	}
+	
+	iteration(gamma) {
+		// Traiter le cas NoMove
+		for(let i = 0; i < this.rows; i++) {
+			for(let j = 0; j < this.cols; j++) {
+				let values = [];
+				let c = this.matrix[i][j];
+				//console.log(c);
+				if(i > 0 && c & ways.UP) {
+					console.log(c & ways.UP);
+					this.helper(i, j, 'Up', gamma, values);
+				}
+				if(i < this.rows - 1 && c & ways.DOWN) {
+					console.log(c & ways.DOWN);
+					this.helper(i, j, 'Down', gamma, values);
+				}
+				if(j > 0 && c & ways.LEFT) {
+					console.log(c & ways.LEFT);
+					this.helper(i, j, 'Left', gamma, values);
+				}
+				if(j < this.cols - 1 && c & ways.RIGHT) {
+					console.log(c & ways.RIGHT);
+					this.helper(i, j, 'Right', gamma, values);
+				}
+				let maximum = Math.max(...values);
+				this.new_value_matrix[i][j] = maximum;
+			}
+		}
+		for(let i = 0; i < this.rows; i++) {
+			for(let j = 0; j < this.cols; j++) {
+				this.value_matrix[i][j] = this.new_value_matrix[i][j];
+			}
+		}
+	}
+	
+	transition(i, j, action) {
+		let res_i = i;
+		let res_j = j;
+		switch(action) {
+		case actions.UP:
+				res_i--;
+		case actions.DOWN:
+				res_i++;
+		case actions.LEFT:
+				res_j--;
+		case actions.RIGHT:
+				res_j++;
+		}
+		return [res_i, res_j];
+	}
+	
 	draw_grid() {
 		this.ctx.lineWidth = 6;
 		this.ctx.lineCap = 'square'
