@@ -59,20 +59,33 @@ class ValueIteration {
 		this.log();
 
 		this.matrix = []
+		this.reward_matrix = []
 		this.value_matrix = []
 		for(let i = 0; i < str.length; i++) {
 			this.matrix.push([]);
+			this.reward_matrix.push([]);
 			this.value_matrix.push([]);
 			for(let j = 0; j < str[0].length; j++) {
 				this.matrix[i].push(parseInt(str[i].charAt(j),16));
-				this.value_matrix[i].push(-1);
+				this.reward_matrix[i].push(-1);
+				this.value_matrix[i].push(0);
 			}
 		}
+
+		this.buffer = document.createElement('canvas');
+		this.buffer.width = this.canvas.width;
+		this.buffer.height = this.canvas.height;
+		this.bufferCtx = this.buffer.getContext('2d');
+		let section = document.getElementById('first_section');
+		//section.appendChild(this.buffer);
 		
 		//this.erase_next();
 		this.erase_maze();
 		this.place_goal();
-		this.draw_value_matrix();
+
+		this.bufferCtx.drawImage(this.canvas, 0, 0);
+
+		this.draw_reward_matrix();
 	}
 
 	draw_grid() {
@@ -155,13 +168,17 @@ class ValueIteration {
 		let j = Math.floor(Math.random() * this.cols);
 
 		console.log("goal: ", i, j);
-		this.value_matrix[i][j] = 0;
+		this.reward_matrix[i][j] = 0;
 		console.log(this.value_matrix);
 	}
-	draw_value_matrix() {
+	clear_and_draw_buffer() {
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.ctx.drawImage(this.buffer, 0, 0);
+	}
+	draw_reward_matrix() {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
-				let value = this.value_matrix[i][j];
+				let value = this.reward_matrix[i][j];
 				if(value == 0) {
 					let style = this.ctx.fillStyle;
 					console.log(style);
@@ -173,6 +190,14 @@ class ValueIteration {
 					this.ctx.fillStyle = style;
 					console.log(this.ctx.fillStyle);
 				}
+				this.ctx.fillText(value, (j+1.25) * this.col_step, (i+1.7) * this.row_step);
+			}
+		}
+	}
+	draw_value_matrix() {
+		for(let i = 0; i < this.rows; i++) {
+			for(let j = 0; j < this.cols; j++) {
+				let value = this.value_matrix[i][j];
 				this.ctx.fillText(value, (j+1.25) * this.col_step, (i+1.7) * this.row_step);
 			}
 		}
