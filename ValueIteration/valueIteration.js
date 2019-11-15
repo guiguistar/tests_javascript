@@ -8,7 +8,7 @@ const actions = {
 
 const ways = {
 	'UP': 1,
-	'RIGH': 2,
+	'RIGHT': 2,
 	'DOWN': 4,
 	'LEFT': 8,
 }
@@ -105,13 +105,14 @@ class ValueIteration {
 
 		this.bufferCtx.drawImage(this.canvas, 0, 0);
 
-		this.draw_reward_matrix();
+		//this.draw_reward_matrix();
 	}
 
-	helper(i, j, action, gamma, values) {
-		let move = this.transition(i,j,action);
+	helper(i, j, action, gamma) {
+		let move = this.transition(i, j, action);
 		let new_value = this.reward_matrix[i][j] + gamma * this.value_matrix[move[0]][move[1]];
-		values.push(new_value);
+
+		return new_value;
 	}
 
 	iterate(n) {
@@ -130,21 +131,24 @@ class ValueIteration {
 				let c = this.matrix[i][j];
 				//console.log(c);
 				if(i > 0 && c & ways.UP) {
-					console.log(c & ways.UP);
-					this.helper(i, j, 'Up', gamma, values);
+					//console.log(c & ways.UP);
+					values.push(this.helper(i, j, 'Up', gamma, values));
 				}
 				if(i < this.rows - 1 && c & ways.DOWN) {
-					console.log(c & ways.DOWN);
-					this.helper(i, j, 'Down', gamma, values);
+					//console.log(c & ways.DOWN);
+					values.push(this.helper(i, j, 'Down', gamma, values));
 				}
 				if(j > 0 && c & ways.LEFT) {
-					console.log(c & ways.LEFT);
-					this.helper(i, j, 'Left', gamma, values);
+					//console.log(c & ways.LEFT);
+					values.push(this.helper(i, j, 'Left', gamma, values));
 				}
 				if(j < this.cols - 1 && c & ways.RIGHT) {
-					console.log(c & ways.RIGHT);
-					this.helper(i, j, 'Right', gamma, values);
+					//console.log(c & ways.RIGHT);
+					values.push(this.helper(i, j, 'Right', gamma, values));
 				}
+				// NoMove
+				values.push(this.value_matrix[i][j] + this.reward_matrix[i][j]);
+
 				let maximum = Math.max(...values);
 				this.new_value_matrix[i][j] = maximum;
 			}
@@ -159,16 +163,24 @@ class ValueIteration {
 	transition(i, j, action) {
 		let res_i = i;
 		let res_j = j;
+
 		switch(action) {
 		case actions.UP:
-				res_i--;
-		case actions.DOWN:
-				res_i++;
+			res_i -= 1;
+			break;
+		case actions.DOWN:	
+			res_i += 1;
+			break;
 		case actions.LEFT:
-				res_j--;
+			res_j -= 1;
+			break;
 		case actions.RIGHT:
-				res_j++;
+			res_j += 1;
+			break;
+		default:
+			break;
 		}
+
 		return [res_i, res_j];
 	}
 	
@@ -211,19 +223,19 @@ class ValueIteration {
 	erase_digit(i,j) {
 		//let digit = parseInt(str[i].charAt(j),16);
 		let digit = this.matrix[i][j];
- 		if(digit & 1){
+ 		if(digit & ways.UP){
 			this.erase_top(i,j);
 			//console.log(i, j, "top", String.fromCharCode(codes[digit]), digit);
 		}
- 		if(digit & 2) {
+ 		if(digit & ways.RIGHT) {
 			this.erase_right(i,j);
 			//console.log(i, j, "right", String.fromCharCode(codes[digit]), digit);
 		}
- 		if(digit & 4) {
+ 		if(digit & ways.DOWN) {
 			this.erase_bottom(i,j);
 			//console.log(i, j, "bottom", String.fromCharCode(codes[digit]), digit);
 		}
- 		if(digit & 8) {
+ 		if(digit & ways.LEFT) {
 			this.erase_left(i,j);
 			//console.log(i, j, "left", String.fromCharCode(codes[digit]), digit);
 		}
