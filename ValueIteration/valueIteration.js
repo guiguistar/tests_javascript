@@ -101,7 +101,7 @@ class ValueIteration {
 		
 		//this.erase_next();
 		this.erase_maze();
-		this.place_goal();
+		this.place_goal(0);
 
 		this.bufferCtx.drawImage(this.canvas, 0, 0);
 
@@ -259,12 +259,12 @@ class ValueIteration {
 			requestAnimationFrame(() => this.erase_next());
 		}
 	}
-	place_goal() {
+	place_goal(value) {
 		let i = Math.floor(Math.random() * this.rows);
 		let j = Math.floor(Math.random() * this.cols);
 
 		console.log("goal: ", i, j);
-		this.reward_matrix[i][j] = 0;
+		this.reward_matrix[i][j] = value;
 		console.log(this.value_matrix);
 	}
 	clear_and_draw_buffer() {
