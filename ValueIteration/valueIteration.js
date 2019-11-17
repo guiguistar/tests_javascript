@@ -57,13 +57,15 @@ class ValueIteration {
 		this.rows = rows;
 		this.cols = cols;
 
-		this.size = 30
+		this.size = 20
 		
 		this.canvas = document.getElementById('main_canvas');
 		this.ctx = this.canvas.getContext('2d');
 
 		this.canvas.width = (this.cols + 2) * this.size;
 		this.canvas.height = (this.rows + 2) * this.size;
+		this.ctx.lineWidth = 2;
+		this.ctx.font = '' + this.ctx.lineWidth * 3 + 'px monospace';
 		
 		this.row_step = this.size;
 		this.col_step = this.size;
@@ -117,34 +119,29 @@ class ValueIteration {
 
 	iterate(n) {
 		for(let i = 0; i < n; i++) {
-			this.iteration(1);
+			this.iteration(1);	
+			this.copy_matrix(this.new_value_matrix, this.value_matrix);
 			this.clear_and_draw_buffer();
 			this.draw_value_matrix();
 		}
 	}
 	
 	iteration(gamma) {
-		// Traiter le cas NoMove
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
 				let values = [];
 				let c = this.matrix[i][j];
-				//console.log(c);
 				if(i > 0 && c & ways.UP) {
-					//console.log(c & ways.UP);
-					values.push(this.helper(i, j, 'Up', gamma, values));
+					values.push(this.helper(i, j, 'Up', gamma));
 				}
 				if(i < this.rows - 1 && c & ways.DOWN) {
-					//console.log(c & ways.DOWN);
-					values.push(this.helper(i, j, 'Down', gamma, values));
+					values.push(this.helper(i, j, 'Down', gamma));
 				}
 				if(j > 0 && c & ways.LEFT) {
-					//console.log(c & ways.LEFT);
-					values.push(this.helper(i, j, 'Left', gamma, values));
+					values.push(this.helper(i, j, 'Left', gamma));
 				}
 				if(j < this.cols - 1 && c & ways.RIGHT) {
-					//console.log(c & ways.RIGHT);
-					values.push(this.helper(i, j, 'Right', gamma, values));
+					values.push(this.helper(i, j, 'Right', gamma));
 				}
 				// NoMove
 				values.push(this.value_matrix[i][j] + this.reward_matrix[i][j]);
@@ -153,9 +150,11 @@ class ValueIteration {
 				this.new_value_matrix[i][j] = maximum;
 			}
 		}
+	}
+	copy_matrix(src, dst) {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
-				this.value_matrix[i][j] = this.new_value_matrix[i][j];
+				dst[i][j] = src[i][j];
 			}
 		}
 	}
@@ -185,13 +184,13 @@ class ValueIteration {
 	}
 	
 	draw_grid() {
-		this.ctx.lineWidth = 6;
-		this.ctx.lineCap = 'square'
+		// Horizontal lines
 		for(let i = 1; i < this.rows+2; i++) {
 			this.ctx.moveTo(this.row_step, i*this.row_step);
 			this.ctx.lineTo(this.canvas.width-this.row_step, i*this.row_step);
 			this.ctx.stroke();
 		}
+		// Vertical lines
 		for(let j = 1; j < this.cols+2; j++) {
 			this.ctx.moveTo(j*this.col_step, this.col_step);
 			this.ctx.lineTo(j*this.col_step, this.canvas.height-this.col_step);
