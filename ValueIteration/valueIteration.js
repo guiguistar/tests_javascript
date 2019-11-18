@@ -270,20 +270,34 @@ class ValueIteration {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.ctx.drawImage(this.buffer, 0, 0);
 	}
+	fill_value_matrix() {
+		for(let i = 0; i < this.rows; i++) {
+			for(let j = 0; j < this.cols; j++) {
+				//let color = 'hsl(240, 80%, ' + (100 + 0.5 * this.value_matrix[i][j]) + '%)';
+				let color = 'hsl(' + (360-this.value_matrix[i][j]) + ', 80%, 50%)';
+				console.log(color);
+				this.draw_cell(i, j, color);
+			}
+		}
+	}
+	draw_goal() {
+		this.draw_cell(this.i_goal, this.j_goal, 'yellow');
+	}
+	draw_cell(i, j, color) {
+		let style = this.ctx.fillStyle;
+		this.ctx.fillStyle = color;
+		this.ctx.fillRect((j+1) * this.col_step + this.ctx.lineWidth / 2,
+						  (i+1) * this.row_step + this.ctx.lineWidth / 2,
+						  this.col_step - this.ctx.lineWidth,
+						  this.row_step - this.ctx.lineWidth);
+		this.ctx.fillStyle = style;
+	}
 	draw_reward_matrix() {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
 				let value = this.reward_matrix[i][j];
 				if(value == 0) {
-					let style = this.ctx.fillStyle;
-					console.log(style);
-					this.ctx.fillStyle = 'yellow';
-					this.ctx.fillRect((j+1) * this.col_step + this.ctx.lineWidth / 2,
-								  (i+1) * this.row_step + this.ctx.lineWidth / 2,
-								  this.col_step - this.ctx.lineWidth,
-								  this.row_step - this.ctx.lineWidth);
-					this.ctx.fillStyle = style;
-					console.log(this.ctx.fillStyle);
+					this.draw_cell(i, j, yellow);
 				}
 				this.ctx.fillText(value, (j+1.25) * this.col_step, (i+1.7) * this.row_step);
 			}
