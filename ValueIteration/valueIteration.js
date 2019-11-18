@@ -79,7 +79,8 @@ class ValueIteration {
 		this.reward_matrix = []
 		this.value_matrix = []
 		this.new_value_matrix = [];
-		
+
+		// Initialize the matrices
 		for(let i = 0; i < str.length; i++) {
 			this.matrix.push([]);
 			this.reward_matrix.push([]);
@@ -259,12 +260,11 @@ class ValueIteration {
 		}
 	}
 	place_goal(value) {
-		let i = Math.floor(Math.random() * this.rows);
-		let j = Math.floor(Math.random() * this.cols);
+		this.i_goal = Math.floor(Math.random() * this.rows);
+		this.j_goal = Math.floor(Math.random() * this.cols);
 
-		console.log("goal: ", i, j);
-		this.reward_matrix[i][j] = value;
-		console.log(this.value_matrix);
+		console.log("goal: ", this.i_goal, this.j_goal);
+		this.reward_matrix[this.i_goal][this.j_goal] = value;
 	}
 	clear_and_draw_buffer() {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
