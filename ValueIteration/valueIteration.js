@@ -1,3 +1,10 @@
+/*
+  TODO:
+  -rename methods
+  -make converge method
+  
+*/
+
 const actions = {
 	'UP': 'Up',
 	'DOWN': 'Down',
@@ -198,60 +205,60 @@ class ValueIteration {
 			this.ctx.stroke();
 		}
 	}
-	erase_top(i,j)    { this.erase(i, j, 0, -1); }
-	erase_bottom(i,j) { this.erase(i, j, 1, -1); }
-	erase_left(i,j)   { this.erase(i, j, 0,  0); }
-	erase_right(i,j)  { this.erase(i, j, 0,  1); }
+	fill_top(i, j, color)    { this.fill_cell(i, j, 0, -1, color); }
+	fill_bottom(i, j, color) { this.fill_cell(i, j, 1, -1, color); }
+	fill_left(i, j, color)   { this.fill_cell(i, j, 0,  0, color); }
+	fill_right(i, j, color)  { this.fill_cell(i, j, 0,  1, color); }
 	
-	erase(i, j, bottom, right) {
+	fill_cell(i, j, bottom, right, color) {
 		let style = this.ctx.fillStyle;
-		this.ctx.fillStyle = 'white'
+		this.ctx.fillStyle = color
 
 		let w = this.ctx.lineWidth;
 		let h = w;
 
 		let vertical = right != -1 ? 1 : 0;
 		
-		this.ctx.rect((j+1+vertical*right) * this.row_step + w/2 - vertical * w,
+		this.ctx.fillRect((j+1+vertical*right) * this.row_step + w/2 - vertical * w,
 					  (i+1+bottom) * this.col_step + h/2 - (1-vertical) * h,
 					  w + (1-vertical) * (this.col_step - 2 * w),
 					  h + vertical * (this.row_step -2 * h));
-		this.ctx.fill();
 		
 		this.ctx.fillStyle = style;
 	}
-	erase_digit(i,j) {
+	fill_digit(i, j, color) {
 		//let digit = parseInt(str[i].charAt(j),16);
 		let digit = this.matrix[i][j];
  		if(digit & ways.UP){
-			this.erase_top(i,j);
+			this.fill_top(i, j, color);
 			//console.log(i, j, "top", String.fromCharCode(codes[digit]), digit);
 		}
  		if(digit & ways.RIGHT) {
-			this.erase_right(i,j);
+			this.fill_right(i, j, color);
 			//console.log(i, j, "right", String.fromCharCode(codes[digit]), digit);
 		}
  		if(digit & ways.DOWN) {
-			this.erase_bottom(i,j);
+			this.fill_bottom(i, j, color);
 			//console.log(i, j, "bottom", String.fromCharCode(codes[digit]), digit);
 		}
  		if(digit & ways.LEFT) {
-			this.erase_left(i,j);
+			this.fill_left(i, j, color);
 			//console.log(i, j, "left", String.fromCharCode(codes[digit]), digit);
 		}
 	}
 	erase_maze() {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
-				this.erase_digit(i,j);
+				this.fill_digit(i, j, 'white');
 			}
 		}
 	}
+	// For animated maze creation
 	erase_next() {
 		let j = this.counter % this.cols;
 		let i = (this.counter - j) / this.cols;
 
-		this.erase_digit(i,j);
+		this.fill_digit(i, j, 'white');
 		//console.log(i,j);
 		this.counter++;
 
@@ -275,8 +282,9 @@ class ValueIteration {
 			for(let j = 0; j < this.cols; j++) {
 				//let color = 'hsl(240, 80%, ' + (100 + 0.5 * this.value_matrix[i][j]) + '%)';
 				let color = 'hsl(' + (360-this.value_matrix[i][j]) + ', 80%, 50%)';
-				console.log(color);
+				//console.log(color);
 				this.draw_cell(i, j, color);
+				this.fill_digit(i, j, color);
 			}
 		}
 	}
