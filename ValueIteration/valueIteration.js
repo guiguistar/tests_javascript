@@ -2,7 +2,7 @@
   TODO:
   -rename methods
   -make converge method
-  
+  -clear value_matrix
 */
 
 const actions = {
@@ -64,7 +64,7 @@ class ValueIteration {
 		this.rows = rows;
 		this.cols = cols;
 
-		this.size = 20
+		this.size = 30
 		
 		this.canvas = document.getElementById('main_canvas');
 		this.ctx = this.canvas.getContext('2d');
@@ -88,6 +88,7 @@ class ValueIteration {
 		this.new_value_matrix = [];
 
 		// Initialize the matrices
+		
 		for(let i = 0; i < str.length; i++) {
 			this.matrix.push([]);
 			this.reward_matrix.push([]);
@@ -101,7 +102,7 @@ class ValueIteration {
 				this.new_value_matrix[i].push(0);
 			}
 		}
-
+		
 		this.buffer = document.createElement('canvas');
 		this.buffer.width = this.canvas.width;
 		this.buffer.height = this.canvas.height;
@@ -118,6 +119,17 @@ class ValueIteration {
 		//this.draw_reward_matrix();
 	}
 
+	create_and_initialze_matrix(n, p, f) {
+		matrix = []
+		for(let i = 0; i < n; i++) {
+			matrix.push([]);
+			for(let j = 0; j < str[0].length; j++) {
+				matrix[i].push(f(i, j));
+			}
+		}
+		return matrix;
+	}
+	
 	helper(i, j, action, gamma) {
 		let move = this.transition(i, j, action);
 		let new_value = this.reward_matrix[i][j] + gamma * this.value_matrix[move[0]][move[1]];
@@ -133,7 +145,18 @@ class ValueIteration {
 			this.draw_value_matrix();
 		}
 	}
-	
+	fill_and_iterate(n) {
+		for(let i = 0; i < n; i++) {
+			this.iteration(1);	
+			this.copy_matrix(this.new_value_matrix, this.value_matrix);
+		}
+		this.counter += n;
+		this.fill_value_matrix();
+		this.draw_value_matrix();
+		if(this.counter < this.rows * this.cols) {
+			requestAnimationFrame(() => this.fill_and_iterate(n));
+		}
+	}
 	iteration(gamma) {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
@@ -277,12 +300,17 @@ class ValueIteration {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.ctx.drawImage(this.buffer, 0, 0);
 	}
+	get_color_from_value(value) {
+		//let color = 'hsl(240, 80%, ' + (100 + 0.5 * this.value_matrix[i][j]) + '%)';
+		let color = 'hsl(' + (360 - value) + ', 80%, 50%)';
+		//console.log(color);
+
+		return color;
+	}
 	fill_value_matrix() {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
-				//let color = 'hsl(240, 80%, ' + (100 + 0.5 * this.value_matrix[i][j]) + '%)';
-				let color = 'hsl(' + (360-this.value_matrix[i][j]) + ', 80%, 50%)';
-				//console.log(color);
+				let color = this.get_color_from_value(this.value_matrix[i][j]);
 				this.draw_cell(i, j, color);
 				this.fill_digit(i, j, color);
 			}
@@ -328,3 +356,4 @@ class ValueIteration {
 }
 
 var iter = new ValueIteration(str.length, str[0].length);
+iter.fill_and_iterate(1);
