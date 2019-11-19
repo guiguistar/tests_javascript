@@ -1,7 +1,21 @@
 /*
+  Naming conventions
+    
+  Methods starting by draw_ are meant to drawn numbers on the grid. For exemple,
+  draw_value_matrix() will put the coefficients of the matrix on the cancas.
+
+  Method starting with reset_ put all the coefficient of a mtrix to 0.
+
+  Methods starting with fill_ paint the cells of the grid.
+
+  Methods starting with clear_ will clear the canvas.
+
+  
+
   TODO:
   -rename methods
   -make converge method
+  -place_goal should be set_goal + fill_goal
   -clear value_matrix
 */
 
@@ -94,8 +108,8 @@ class ValueIteration {
 		let section = document.getElementById('first_section');
 		//section.appendChild(this.buffer);
 		
-		//this.erase_next();
-		this.erase_maze();
+		//this.fill_and_iterate();
+		this.clear_maze();
 		this.place_goal(0);
 
 		this.bufferCtx.drawImage(this.canvas, 0, 0);
@@ -114,7 +128,7 @@ class ValueIteration {
 		return matrix;
 	}
 	
-	helper(i, j, action, gamma) {
+	new_value(i, j, action, gamma) {
 		let move = this.transition(i, j, action);
 		let new_value = this.reward_matrix[i][j] + gamma * this.value_matrix[move[0]][move[1]];
 
@@ -129,47 +143,28 @@ class ValueIteration {
 			this.draw_value_matrix();
 		}
 	}
-	fill_and_iterate(n) {
-		for(let i = 0; i < n; i++) {
-			this.iteration(1);	
-			this.copy_matrix(this.new_value_matrix, this.value_matrix);
-		}
-		this.counter += n;
-		this.fill_value_matrix();
-		this.draw_value_matrix();
-		if(this.counter < this.rows * this.cols) {
-			requestAnimationFrame(() => this.fill_and_iterate(n));
-		}
-	}
 	iteration(gamma) {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
 				let values = [];
 				let c = this.matrix[i][j];
 				if(i > 0 && c & ways.UP) {
-					values.push(this.helper(i, j, 'Up', gamma));
+					values.push(this.new_value(i, j, 'Up', gamma));
 				}
 				if(i < this.rows - 1 && c & ways.DOWN) {
-					values.push(this.helper(i, j, 'Down', gamma));
+					values.push(this.new_value(i, j, 'Down', gamma));
 				}
 				if(j > 0 && c & ways.LEFT) {
-					values.push(this.helper(i, j, 'Left', gamma));
+					values.push(this.new_value(i, j, 'Left', gamma));
 				}
 				if(j < this.cols - 1 && c & ways.RIGHT) {
-					values.push(this.helper(i, j, 'Right', gamma));
+					values.push(this.new_value(i, j, 'Right', gamma));
 				}
 				// NoMove
 				values.push(this.value_matrix[i][j] + this.reward_matrix[i][j]);
 
 				let maximum = Math.max(...values);
 				this.new_value_matrix[i][j] = maximum;
-			}
-		}
-	}
-	copy_matrix(src, dst) {
-		for(let i = 0; i < this.rows; i++) {
-			for(let j = 0; j < this.cols; j++) {
-				dst[i][j] = src[i][j];
 			}
 		}
 	}
@@ -253,16 +248,22 @@ class ValueIteration {
 			//console.log(i, j, "left", String.fromCharCode(codes[digit]), digit);
 		}
 	}
-	reset_matrix(matrix) {
-		let n = matrix.length;
-		let p = matrix[0].length;
+	fill_and_iterate(n) {
 		for(let i = 0; i < n; i++) {
-			for(let j = 0; j < p; j++) {
-				matrix[i][j] = 0;
-			}
+			this.iteration(1);	
+			this.copy_matrix(this.new_value_matrix, this.value_matrix);
+		}
+		this.counter += n;
+		this.fill_value_matrix();
+		this.draw_value_matrix();
+		if(this.counter < this.rows * this.cols) {
+			requestAnimationFrame(() => this.fill_and_iterate(n));
 		}
 	}
-	erase_maze() {
+	reset_counter() {
+		this.counter = 0;
+	}
+	clear_maze() {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
 				this.fill_digit(i, j, 'white');
@@ -270,7 +271,7 @@ class ValueIteration {
 		}
 	}
 	// For animated maze creation
-	erase_next() {
+	remove_grid_and_iterate() {
 		let j = this.counter % this.cols;
 		let i = (this.counter - j) / this.cols;
 
@@ -279,7 +280,7 @@ class ValueIteration {
 		this.counter++;
 
 		if(this.counter < this.rows * this.cols) {
-			requestAnimationFrame(() => this.erase_next());
+			requestAnimationFrame(() => this.remove_grid_and_iterate());
 		}
 	}
 	place_goal(value) {
@@ -340,7 +341,27 @@ class ValueIteration {
 			}
 		}
 	}
-	equal(m1, m2, epsilon = 0.01) {
+	// This three should be static
+	reset_matrix(matrix, coeff = 0) {
+		let n = matrix.length;
+		let p = matrix[0].length;
+		for(let i = 0; i < n; i++) {
+			for(let j = 0; j < p; j++) {
+				matrix[i][j] = coeff;
+			}
+		}
+	}
+	copy_matrix(src, dst) {
+		let n = src.length;
+		let p = src[0].length;
+		
+		for(let i = 0; i < n; i++) {
+			for(let j = 0; j < p; j++) {
+				dst[i][j] = src[i][j];
+			}
+		}
+	}
+	equal_matrix(m1, m2, epsilon = 0.01) {
 		let n = m1.length;
 		let p = m1[0].length;
 
