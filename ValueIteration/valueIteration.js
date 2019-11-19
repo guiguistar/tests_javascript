@@ -91,8 +91,6 @@ class ValueIteration {
 		this.row_step = this.size;
 		this.col_step = this.size;
 
-		this.counter = 0;
-		
 		this.draw_grid();
 		this.log();
 
@@ -135,15 +133,16 @@ class ValueIteration {
 		return new_value;
 	}
 
-	iterate(n) {
-		for(let i = 0; i < n; i++) {
+	fill_after_iterations(n) {
+		for(let i = 0; i <= n; i++) {
 			this.copy_matrix(this.new_value_matrix, this.value_matrix);
-			this.iteration(1);	
-			this.clear_and_draw_buffer();
-			this.draw_value_matrix();
+			this.iteration();
 		}
+		this.clear_and_draw_buffer();
+		this.fill_value_matrix();
+		this.draw_value_matrix();
 	}
-	iteration(gamma) {
+	iteration(gamma = 1) {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
 				let values = [];
@@ -231,37 +230,33 @@ class ValueIteration {
 	fill_digit(i, j, color) {
 		//let digit = parseInt(str[i].charAt(j),16);
 		let digit = this.matrix[i][j];
+
  		if(digit & ways.UP){
 			this.fill_top(i, j, color);
-			//console.log(i, j, "top", String.fromCharCode(codes[digit]), digit);
 		}
  		if(digit & ways.RIGHT) {
 			this.fill_right(i, j, color);
-			//console.log(i, j, "right", String.fromCharCode(codes[digit]), digit);
 		}
  		if(digit & ways.DOWN) {
 			this.fill_bottom(i, j, color);
-			//console.log(i, j, "bottom", String.fromCharCode(codes[digit]), digit);
 		}
  		if(digit & ways.LEFT) {
 			this.fill_left(i, j, color);
-			//console.log(i, j, "left", String.fromCharCode(codes[digit]), digit);
 		}
 	}
-	fill_and_iterate(n) {
-		for(let i = 0; i < n; i++) {
-			this.iteration(1);	
-			this.copy_matrix(this.new_value_matrix, this.value_matrix);
-		}
-		this.counter += n;
+	fill_until_converge(counter = 0) {
+		this.iteration(1);
+		
 		this.fill_value_matrix();
 		this.draw_value_matrix();
-		if(this.counter < this.rows * this.cols) {
-			requestAnimationFrame(() => this.fill_and_iterate(n));
+			
+		if( !this.equal_matrix(this.value_matrix, this.new_value_matrix) ) {
+			this.copy_matrix(this.new_value_matrix, this.value_matrix);
+			requestAnimationFrame( () => this.fill_until_converge(counter + 1) );
 		}
-	}
-	reset_counter() {
-		this.counter = 0;
+		else {
+			console.log( (counter - 1) + " iterations before convergence.");
+		}
 	}
 	clear_maze() {
 		for(let i = 0; i < this.rows; i++) {
@@ -271,16 +266,14 @@ class ValueIteration {
 		}
 	}
 	// For animated maze creation
-	remove_grid_and_iterate() {
-		let j = this.counter % this.cols;
-		let i = (this.counter - j) / this.cols;
+	remove_grid_and_iterate(counter = 0) {
+		let j = counter % this.cols;
+		let i = (counter - j) / this.cols;
 
 		this.fill_digit(i, j, 'white');
-		//console.log(i,j);
-		this.counter++;
 
-		if(this.counter < this.rows * this.cols) {
-			requestAnimationFrame(() => this.remove_grid_and_iterate());
+		if(counter < this.rows * this.cols) {
+			requestAnimationFrame(() => this.remove_grid_and_iterate(counter + 1));
 		}
 	}
 	place_goal(value) {
@@ -294,7 +287,7 @@ class ValueIteration {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.ctx.drawImage(this.buffer, 0, 0);
 	}
-	get_color_from_value(value) {
+	compute_color_from_value(value) {
 		//let color = 'hsl(240, 80%, ' + (100 + 0.5 * this.value_matrix[i][j]) + '%)';
 		let color = 'hsl(' + (360 - value) + ', 80%, 50%)';
 		//console.log(color);
@@ -304,7 +297,7 @@ class ValueIteration {
 	fill_value_matrix() {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
-				let color = this.get_color_from_value(this.value_matrix[i][j]);
+				let color = this.compute_color_from_value(this.value_matrix[i][j]);
 				this.draw_cell(i, j, color);
 				this.fill_digit(i, j, color);
 			}
@@ -327,7 +320,7 @@ class ValueIteration {
 			for(let j = 0; j < this.cols; j++) {
 				let value = this.reward_matrix[i][j];
 				if(value == 0) {
-					this.draw_cell(i, j, yellow);
+					this.draw_cell(i, j, 'yellow');
 				}
 				this.ctx.fillText(value, (j+1.25) * this.col_step, (i+1.7) * this.row_step);
 			}
@@ -340,6 +333,9 @@ class ValueIteration {
 				this.ctx.fillText(value, (j+1.25) * this.col_step, (i+1.7) * this.row_step);
 			}
 		}
+	}
+	reset_value_matrix() {
+		this.reset_matrix(this.value_matrix);
 	}
 	// This three should be static
 	reset_matrix(matrix, coeff = 0) {
@@ -389,4 +385,5 @@ class ValueIteration {
 }
 
 var iter = new ValueIteration(str.length, str[0].length);
-iter.fill_and_iterate(1);
+iter.fill_until_converge();
+//iter.fill_after_iterations(200);
