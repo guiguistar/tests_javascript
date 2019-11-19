@@ -123,8 +123,8 @@ class ValueIteration {
 
 	iterate(n) {
 		for(let i = 0; i < n; i++) {
-			this.iteration(1);	
 			this.copy_matrix(this.new_value_matrix, this.value_matrix);
+			this.iteration(1);	
 			this.clear_and_draw_buffer();
 			this.draw_value_matrix();
 		}
@@ -253,6 +253,15 @@ class ValueIteration {
 			//console.log(i, j, "left", String.fromCharCode(codes[digit]), digit);
 		}
 	}
+	reset_matrix(matrix) {
+		let n = matrix.length;
+		let p = matrix[0].length;
+		for(let i = 0; i < n; i++) {
+			for(let j = 0; j < p; j++) {
+				matrix[i][j] = 0;
+			}
+		}
+	}
 	erase_maze() {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
@@ -330,6 +339,25 @@ class ValueIteration {
 				this.ctx.fillText(value, (j+1.25) * this.col_step, (i+1.7) * this.row_step);
 			}
 		}
+	}
+	equal(m1, m2, epsilon = 0.01) {
+		let n = m1.length;
+		let p = m1[0].length;
+
+		if(n !=  m2.length) {
+			return false;
+		}
+		if(p != m2[0].length) {
+			return false;
+		}
+		for(let i = 0; i < n; i++) {
+			for(let j = 0; j < n; j++) {
+				if(Math.abs(m1[i][j] - m2[i][j]) > epsilon) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	log() {
 		console.log(this.canvas);
