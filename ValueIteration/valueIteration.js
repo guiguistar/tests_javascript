@@ -82,27 +82,11 @@ class ValueIteration {
 		this.draw_grid();
 		this.log();
 
-		this.matrix = []
-		this.reward_matrix = []
-		this.value_matrix = []
-		this.new_value_matrix = [];
+		this.matrix           = this.create_and_initialize_matrix(this.rows, this.cols, (i, j) => parseInt(str[i].charAt(j),16) );
+		this.reward_matrix    = this.create_and_initialize_matrix(this.rows, this.cols, (i, j) => -1);
+		this.value_matrix     = this.create_and_initialize_matrix(this.rows, this.cols, (i, j) => 0);
+		this.new_value_matrix = this.create_and_initialize_matrix(this.rows, this.cols, (i, j) => 0);
 
-		// Initialize the matrices
-		
-		for(let i = 0; i < str.length; i++) {
-			this.matrix.push([]);
-			this.reward_matrix.push([]);
-			this.value_matrix.push([]);
-			this.new_value_matrix.push([]);
-			
-			for(let j = 0; j < str[0].length; j++) {
-				this.matrix[i].push(parseInt(str[i].charAt(j),16));
-				this.reward_matrix[i].push(-1);
-				this.value_matrix[i].push(0);
-				this.new_value_matrix[i].push(0);
-			}
-		}
-		
 		this.buffer = document.createElement('canvas');
 		this.buffer.width = this.canvas.width;
 		this.buffer.height = this.canvas.height;
@@ -119,11 +103,11 @@ class ValueIteration {
 		//this.draw_reward_matrix();
 	}
 
-	create_and_initialze_matrix(n, p, f) {
-		matrix = []
+	create_and_initialize_matrix(n, p, f) {
+		let matrix = []
 		for(let i = 0; i < n; i++) {
 			matrix.push([]);
-			for(let j = 0; j < str[0].length; j++) {
+			for(let j = 0; j < p; j++) {
 				matrix[i].push(f(i, j));
 			}
 		}
