@@ -113,6 +113,7 @@ class ValueIteration {
 		this.bufferCtx.drawImage(this.canvas, 0, 0);
 
 		//this.draw_reward_matrix();
+		this.attach_listeners();
 	}
 
 	create_and_initialize_matrix(n, p, f) {
@@ -276,7 +277,14 @@ class ValueIteration {
 			requestAnimationFrame(() => this.remove_grid_and_iterate(counter + 1));
 		}
 	}
-	place_goal(value) {
+	replace_goal(i, j) {
+		this.reset_matrix(this.value_matrix);
+		this.reset_matrix(this.new_value_matrix);
+		this.reset_matrix(this.reward_matrix, -1);
+		this.reward_matrix[i][j] = 0;
+		//this.draw_reward_matrix();
+	}
+	place_goal(value = 0) {
 		this.i_goal = Math.floor(Math.random() * this.rows);
 		this.j_goal = Math.floor(Math.random() * this.cols);
 
@@ -286,13 +294,6 @@ class ValueIteration {
 	clear_and_draw_buffer() {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.ctx.drawImage(this.buffer, 0, 0);
-	}
-	compute_color_from_value(value) {
-		//let color = 'hsl(240, 80%, ' + (100 + 0.5 * this.value_matrix[i][j]) + '%)';
-		let color = 'hsl(' + (360 - value) + ', 80%, 50%)';
-		//console.log(color);
-
-		return color;
 	}
 	fill_value_matrix() {
 		for(let i = 0; i < this.rows; i++) {
@@ -337,7 +338,31 @@ class ValueIteration {
 	reset_value_matrix() {
 		this.reset_matrix(this.value_matrix);
 	}
-	// This three should be static
+	log() {
+		console.log(this.canvas);
+		console.log(this.canvas.width, this.canvas.height);
+		console.log("rows: ", this.rows, ", cols: ", this.cols);
+		console.log("row_step: ",this.row_step, ", col_step: ", this.col_step);
+	}
+	attach_listeners() {
+		let that = this;
+		this.canvas.addEventListener('mousedown', function(e) {
+			(function(vI, event) {
+				const rect = vI.canvas.getBoundingClientRect();
+				const x = -1 + Math.floor((event.clientX - rect.left) / vI.col_step);
+				const y = -1 + Math.floor((event.clientY - rect.top) / vI.row_step);
+				vI.replace_goal(y, x);
+				console.log("x: " + x + " y: " + y);
+			})(that, e);
+		});
+	}
+	// This four should be static
+	compute_color_from_value(value) {
+		//let color = 'hsl(240, 80%, ' + (100 + 0.5 * this.value_matrix[i][j]) + '%)';
+		let color = 'hsl(' + (360 - value) + ', 80%, 50%)';
+
+		return color;
+	}
 	reset_matrix(matrix, coeff = 0) {
 		let n = matrix.length;
 		let p = matrix[0].length;
@@ -361,10 +386,7 @@ class ValueIteration {
 		let n = m1.length;
 		let p = m1[0].length;
 
-		if(n !=  m2.length) {
-			return false;
-		}
-		if(p != m2[0].length) {
+		if(n !=  m2.length || p != m2[0].length) {
 			return false;
 		}
 		for(let i = 0; i < n; i++) {
@@ -376,14 +398,8 @@ class ValueIteration {
 		}
 		return true;
 	}
-	log() {
-		console.log(this.canvas);
-		console.log(this.canvas.width, this.canvas.height);
-		console.log("rows: ", this.rows, ", cols: ", this.cols);
-		console.log("row_step: ",this.row_step, ", col_step: ", this.col_step);
-	}
 }
 
 var iter = new ValueIteration(str.length, str[0].length);
-iter.fill_until_converge();
+//iter.fill_until_converge();
 //iter.fill_after_iterations(200);

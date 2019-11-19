@@ -2,4 +2,6 @@ body {
 	text-align: center;
 }
 canvas {
+	border: solid 1px;
+	border-color: 'black';
 }
