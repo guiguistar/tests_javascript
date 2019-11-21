@@ -95,7 +95,13 @@ var codes = [  0x20,
 
 class ValueIteration {
 	constructor(canvas, matrix) {
-		this.canvas = canvas;
+		this.canvas = canvas; // once
+		this.draw_value_matrix_on = true;
+		this.init_matrix(matrix);
+		this.attach_listeners();
+	}
+	init_matrix(matrix) {
+		this.matrix = matrix;
 		this.rows = matrix.length;
 		this.cols = matrix[0].length;
 
@@ -121,9 +127,6 @@ class ValueIteration {
 		this.place_goal_randomly(0);
 
 		this.bufferCtx.drawImage(this.canvas, 0, 0);
-
-		//this.draw_reward_matrix();
-		this.attach_listeners();
 	}
 	init_sizes(coeff=0.8) {
 		let row_step = Math.floor(coeff * window.innerHeight / this.rows);
@@ -135,12 +138,21 @@ class ValueIteration {
 		this.canvas.width = (this.cols + 2) * this.size;
 		this.canvas.height = (this.rows + 2) * this.size;
 		this.ctx.lineWidth = 2;
-		this.ctx.font = '' + this.ctx.lineWidth * 3 + 'px monospace';
+		this.ctx.lineCap = 'round';
+		this.ctx.font = '' + (this.size - 2 * this.ctx.lineWidth) / 3 + 'px monospace';
 		
 		this.row_step = this.size;
 		this.col_step = this.size;
 
-	}	
+	}
+	toggle_draw_value_matrix_on() {
+		this.draw_value_matrix_on = !this.draw_value_matrix_on;
+		this.clear_and_draw_buffer();
+		this.fill_value_matrix();
+		if(this.draw_value_matrix_on) {
+			this.draw_value_matrix();
+		}
+	}
 	create_and_initialize_matrix(n, p, f) {
 		let matrix = []
 		for(let i = 0; i < n; i++) {
@@ -259,7 +271,7 @@ class ValueIteration {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
 				let value = this.value_matrix[i][j];
-				this.ctx.fillText(value, (j+1.25) * this.col_step, (i+1.7) * this.row_step);
+				this.ctx.fillText(value, (j+1.15) * this.col_step, (i+1.7) * this.row_step);
 			}
 		}
 	}
@@ -319,7 +331,9 @@ class ValueIteration {
 			that.iteration(1);
 		
 			that.fill_value_matrix();
-			that.draw_value_matrix();
+			if(that.draw_value_matrix_on) {
+				that.draw_value_matrix();
+			}
 			
 			if( !that.equal_matrix(that.value_matrix, that.new_value_matrix) ) {
 				that.copy_matrix(that.new_value_matrix, that.value_matrix);
@@ -386,21 +400,46 @@ class ValueIteration {
 	}
 	attach_listeners() {
 		let that = this;
-		this.canvas.addEventListener('mousedown', function(e) {
-			(function(vI, event) {
-				const rect = vI.canvas.getBoundingClientRect();
-				const x = -1 + Math.floor((event.clientX - rect.left) / vI.col_step);
-				const y = -1 + Math.floor((event.clientY - rect.top) / vI.row_step);
+		this.canvas.addEventListener('mousedown', function(event) {
+			const rect = that.canvas.getBoundingClientRect();
+			const x = -1 + Math.floor((event.clientX - rect.left) / that.col_step);
+			const y = -1 + Math.floor((event.clientY - rect.top) / that.row_step);
 
-				vI.reset_all();
-				vI.place_goal(y, x);
-				vI.stop_fill_until_converge();
-				vI.fill_until_converge();
-				
-				console.log("x: " + x + " y: " + y);
-			})(that, e);
+			that.reset_all();
+			that.place_goal(y, x);
+			that.stop_fill_until_converge();
+			that.fill_until_converge();
+			
+			console.log("x: " + x + " y: " + y);
 		});
 	}
+	vi_listener(event, vI) {
+		const rect = vI.canvas.getBoundingClientRect();
+		const x = -1 + Math.floor((event.clientX - rect.left) / vI.col_step);
+		const y = -1 + Math.floor((event.clientY - rect.top) / vI.row_step);
+
+		vI.reset_all();
+		vI.place_goal(y, x);
+		vI.stop_fill_until_converge();
+		vI.fill_until_converge();
+		
+		console.log("x: " + x + " y: " + y);
+	}
+	request_json_maze(rows=15, cols=15) {
+		let request = new XMLHttpRequest();
+		let url = "http://www.lespursetdurs.fr/maze/?rows=" + rows + "&cols=" + cols +"&json";
+		let that = this;
+		
+		request.open("GET", url, true);
+		request.responseType = "text";
+		request.onload = function(e) {
+			let matrix = JSON.parse(request.response);
+			that.init_matrix(matrix);
+			console.log(that.matrix);
+		}
+		request.send();	
+	}
+
 	// This four should be static
 	compute_color_from_value(value) {
 		//let color = 'hsl(240, 80%, ' + (100 + 0.5 * this.value_matrix[i][j]) + '%)';
@@ -461,17 +500,10 @@ function request_json_maze(canvas, rows=15, cols=15) {
 	request.send();	
 }
 
-//function main(matrix) {
+var canvas = document.getElementById('main_canvas');
+var canvas2 = document.getElementById('second_canvas');
 
-	var canvas = document.getElementById('main_canvas');
-	var canvas2 = document.getElementById('second_canvas');
-	
-	var iter = new ValueIteration(canvas, matrix_test);
-	var iter2 = new ValueIteration(canvas2, matrix_test);
+var iter = new ValueIteration(canvas, matrix_test);
+var iter2 = new ValueIteration(canvas2, matrix_test);
 
-	//iter.fill_until_converge();
-	//iter.fill_after_iterations(200);
-//}
-
-//main(matrix_test);
 
