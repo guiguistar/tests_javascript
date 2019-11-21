@@ -14,7 +14,6 @@
 
   TODO:
   -rename methods
-  -make converge method
   -place_goal should be set_goal + fill_goal
   -clear value_matrix
 */
@@ -108,7 +107,7 @@ class ValueIteration {
 		
 		//this.fill_and_iterate();
 		this.clear_maze();
-		this.place_goal(0);
+		this.place_goal_randomly(0);
 
 		this.bufferCtx.drawImage(this.canvas, 0, 0);
 
@@ -245,19 +244,30 @@ class ValueIteration {
 			this.fill_left(i, j, color);
 		}
 	}
-	fill_until_converge(counter = 0) {
-		this.iteration(1);
+	fill_until_converge() {
+		let counter = 0;
+		let that = this;
 		
-		this.fill_value_matrix();
-		this.draw_value_matrix();
+		function helper() {
+			counter++;
+			that.iteration(1);
+		
+			that.fill_value_matrix();
+			that.draw_value_matrix();
 			
-		if( !this.equal_matrix(this.value_matrix, this.new_value_matrix) ) {
-			this.copy_matrix(this.new_value_matrix, this.value_matrix);
-			requestAnimationFrame( () => this.fill_until_converge(counter + 1) );
+			if( !that.equal_matrix(that.value_matrix, that.new_value_matrix) ) {
+				that.copy_matrix(that.new_value_matrix, that.value_matrix);
+				that.animation_request = requestAnimationFrame( () => helper() );
+			}
+			else {
+				console.log( (counter - 1) + " iterations before convergence.");
+			}
 		}
-		else {
-			console.log( (counter - 1) + " iterations before convergence.");
-		}
+
+		this.animation_request = requestAnimationFrame(helper);
+	}
+	stop_fill_until_converge () {
+		cancelAnimationFrame(this.animation_request);
 	}
 	clear_maze() {
 		for(let i = 0; i < this.rows; i++) {
@@ -277,14 +287,15 @@ class ValueIteration {
 			requestAnimationFrame(() => this.remove_grid_and_iterate(counter + 1));
 		}
 	}
-	replace_goal(i, j) {
+	reset_all() {
 		this.reset_matrix(this.value_matrix);
 		this.reset_matrix(this.new_value_matrix);
 		this.reset_matrix(this.reward_matrix, -1);
-		this.reward_matrix[i][j] = 0;
-		//this.draw_reward_matrix();
 	}
-	place_goal(value = 0) {
+	place_goal(i, j) {
+		this.reward_matrix[i][j] = 0;
+	}
+	place_goal_randomly(value = 0) {
 		this.i_goal = Math.floor(Math.random() * this.rows);
 		this.j_goal = Math.floor(Math.random() * this.cols);
 
@@ -351,7 +362,12 @@ class ValueIteration {
 				const rect = vI.canvas.getBoundingClientRect();
 				const x = -1 + Math.floor((event.clientX - rect.left) / vI.col_step);
 				const y = -1 + Math.floor((event.clientY - rect.top) / vI.row_step);
-				vI.replace_goal(y, x);
+
+				vI.reset_all();
+				vI.place_goal(y, x);
+				vI.stop_fill_until_converge();
+				vI.fill_until_converge();
+				
 				console.log("x: " + x + " y: " + y);
 			})(that, e);
 		});
