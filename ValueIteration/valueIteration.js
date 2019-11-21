@@ -33,6 +33,27 @@ const ways = {
 	'LEFT': 8,
 }
 
+var matrix_test = [[6,10,10,10,12,6,10,10,12,2,10,14,10,14,12,2,14,10,8,6,14,10,10,10,12,6,12,6,14,12],
+				   [5,6,10,10,13,5,4,6,9,6,12,3,12,5,3,12,3,10,14,9,3,12,2,12,3,9,5,5,5,1],
+				   [5,5,2,10,13,3,13,5,6,9,3,12,5,5,2,11,10,12,1,6,12,5,6,9,6,10,9,1,3,12],
+				   [5,5,6,12,3,12,5,3,11,10,8,5,5,3,12,6,12,3,10,9,3,9,7,10,9,2,10,14,12,5],
+				   [5,3,9,3,12,5,5,2,12,6,10,9,5,4,3,9,3,12,6,10,14,12,5,6,10,10,12,5,3,9],
+				   [5,2,10,12,5,1,3,10,13,5,6,8,3,13,2,12,6,9,5,6,9,5,5,5,4,6,9,5,6,12],
+				   [3,12,6,13,3,10,10,10,9,5,5,6,12,5,6,9,5,6,9,5,4,5,3,9,5,5,2,11,9,5],
+				   [4,3,9,5,2,10,14,10,12,5,3,9,3,11,13,6,9,3,8,5,5,5,6,10,9,3,12,6,10,9],
+				   [7,8,6,9,6,12,5,6,9,5,6,10,10,8,5,5,6,14,10,13,3,11,9,6,10,10,9,7,10,12],
+				   [7,10,9,6,9,3,9,5,4,3,9,6,10,12,1,5,1,5,2,9,6,12,6,9,2,10,10,9,6,13],
+				   [5,6,14,9,6,10,12,3,13,6,14,9,4,3,12,3,12,5,6,10,9,3,9,2,14,10,10,10,9,5],
+				   [5,5,3,10,9,6,9,4,5,1,5,6,11,10,9,6,9,5,3,12,6,12,6,10,9,6,14,8,6,9],
+				   [5,3,10,10,12,3,12,7,9,6,9,3,10,12,4,7,12,3,12,3,9,5,3,12,6,13,1,6,9,4],
+				   [3,12,6,10,9,6,9,3,10,9,2,12,6,9,3,9,5,6,13,6,8,3,10,9,5,1,6,9,6,13],
+				   [6,9,3,10,8,5,6,10,10,10,10,13,3,10,10,12,5,5,3,13,6,14,8,6,11,12,3,10,9,5],
+				   [5,6,10,12,6,9,5,6,12,2,10,9,6,10,12,3,9,3,12,5,5,3,12,5,6,11,10,10,12,5],
+				   [3,9,6,9,5,6,11,9,5,6,10,12,5,4,7,8,6,14,9,1,3,12,3,9,3,10,12,2,13,5],
+				   [6,8,3,10,9,3,10,12,3,9,4,5,3,13,3,12,5,3,10,12,6,9,2,10,14,12,3,12,1,5],
+				   [7,10,10,14,10,10,8,5,6,12,5,3,12,3,12,3,9,4,6,9,3,12,6,12,5,3,12,5,6,9],
+				   [3,10,8,3,10,10,10,11,9,3,11,8,3,10,11,10,10,9,3,10,10,11,9,3,9,2,9,3,11,8],]
+
 var str = ["6C6AAAEAAC6AC2EC686EC2EAAAAC2C",
 		   "15542C3AC53C3C553A953A946AA96D",
 		   "6D57C3AC13C3C3D3AAC3C6E956C6D1",
@@ -73,27 +94,17 @@ var codes = [  0x20,
 			]
 
 class ValueIteration {
-	constructor(rows, cols) {
-		this.rows = rows;
-		this.cols = cols;
+	constructor(canvas, matrix) {
+		this.canvas = canvas;
+		this.rows = matrix.length;
+		this.cols = matrix[0].length;
 
-		this.size = 30
-		
-		this.canvas = document.getElementById('main_canvas');
-		this.ctx = this.canvas.getContext('2d');
-
-		this.canvas.width = (this.cols + 2) * this.size;
-		this.canvas.height = (this.rows + 2) * this.size;
-		this.ctx.lineWidth = 2;
-		this.ctx.font = '' + this.ctx.lineWidth * 3 + 'px monospace';
-		
-		this.row_step = this.size;
-		this.col_step = this.size;
+		this.init_sizes();
 
 		this.draw_grid();
 		this.log();
 
-		this.matrix           = this.create_and_initialize_matrix(this.rows, this.cols, (i, j) => parseInt(str[i].charAt(j),16) );
+		this.matrix           = matrix;
 		this.reward_matrix    = this.create_and_initialize_matrix(this.rows, this.cols, (i, j) => -1);
 		this.value_matrix     = this.create_and_initialize_matrix(this.rows, this.cols, (i, j) => 0);
 		this.new_value_matrix = this.create_and_initialize_matrix(this.rows, this.cols, (i, j) => 0);
@@ -102,7 +113,7 @@ class ValueIteration {
 		this.buffer.width = this.canvas.width;
 		this.buffer.height = this.canvas.height;
 		this.bufferCtx = this.buffer.getContext('2d');
-		let section = document.getElementById('first_section');
+		//let section = document.getElementById('first_section');
 		//section.appendChild(this.buffer);
 		
 		//this.fill_and_iterate();
@@ -114,7 +125,22 @@ class ValueIteration {
 		//this.draw_reward_matrix();
 		this.attach_listeners();
 	}
+	init_sizes(coeff=0.8) {
+		let row_step = Math.floor(coeff * window.innerHeight / this.rows);
+		let row_cols = Math.floor(window.innerWidth  / this.cols);
 
+		this.size = Math.min(row_step, row_cols);		
+		this.ctx = this.canvas.getContext('2d');
+
+		this.canvas.width = (this.cols + 2) * this.size;
+		this.canvas.height = (this.rows + 2) * this.size;
+		this.ctx.lineWidth = 2;
+		this.ctx.font = '' + this.ctx.lineWidth * 3 + 'px monospace';
+		
+		this.row_step = this.size;
+		this.col_step = this.size;
+
+	}	
 	create_and_initialize_matrix(n, p, f) {
 		let matrix = []
 		for(let i = 0; i < n; i++) {
@@ -206,115 +232,6 @@ class ValueIteration {
 			this.ctx.stroke();
 		}
 	}
-	fill_top(i, j, color)    { this.fill_cell(i, j, 0, -1, color); }
-	fill_bottom(i, j, color) { this.fill_cell(i, j, 1, -1, color); }
-	fill_left(i, j, color)   { this.fill_cell(i, j, 0,  0, color); }
-	fill_right(i, j, color)  { this.fill_cell(i, j, 0,  1, color); }
-	
-	fill_cell(i, j, bottom, right, color) {
-		let style = this.ctx.fillStyle;
-		this.ctx.fillStyle = color
-
-		let w = this.ctx.lineWidth;
-		let h = w;
-
-		let vertical = right != -1 ? 1 : 0;
-		
-		this.ctx.fillRect((j+1+vertical*right) * this.row_step + w/2 - vertical * w,
-					  (i+1+bottom) * this.col_step + h/2 - (1-vertical) * h,
-					  w + (1-vertical) * (this.col_step - 2 * w),
-					  h + vertical * (this.row_step -2 * h));
-		
-		this.ctx.fillStyle = style;
-	}
-	fill_digit(i, j, color) {
-		//let digit = parseInt(str[i].charAt(j),16);
-		let digit = this.matrix[i][j];
-
- 		if(digit & ways.UP){
-			this.fill_top(i, j, color);
-		}
- 		if(digit & ways.RIGHT) {
-			this.fill_right(i, j, color);
-		}
- 		if(digit & ways.DOWN) {
-			this.fill_bottom(i, j, color);
-		}
- 		if(digit & ways.LEFT) {
-			this.fill_left(i, j, color);
-		}
-	}
-	fill_until_converge() {
-		let counter = 0;
-		let that = this;
-		
-		function helper() {
-			counter++;
-			that.iteration(1);
-		
-			that.fill_value_matrix();
-			that.draw_value_matrix();
-			
-			if( !that.equal_matrix(that.value_matrix, that.new_value_matrix) ) {
-				that.copy_matrix(that.new_value_matrix, that.value_matrix);
-				that.animation_request = requestAnimationFrame( () => helper() );
-			}
-			else {
-				console.log( (counter - 1) + " iterations before convergence.");
-			}
-		}
-
-		this.animation_request = requestAnimationFrame(helper);
-	}
-	stop_fill_until_converge () {
-		cancelAnimationFrame(this.animation_request);
-	}
-	clear_maze() {
-		for(let i = 0; i < this.rows; i++) {
-			for(let j = 0; j < this.cols; j++) {
-				this.fill_digit(i, j, 'white');
-			}
-		}
-	}
-	// For animated maze creation
-	remove_grid_and_iterate(counter = 0) {
-		let j = counter % this.cols;
-		let i = (counter - j) / this.cols;
-
-		this.fill_digit(i, j, 'white');
-
-		if(counter < this.rows * this.cols) {
-			requestAnimationFrame(() => this.remove_grid_and_iterate(counter + 1));
-		}
-	}
-	reset_all() {
-		this.reset_matrix(this.value_matrix);
-		this.reset_matrix(this.new_value_matrix);
-		this.reset_matrix(this.reward_matrix, -1);
-	}
-	place_goal(i, j) {
-		this.reward_matrix[i][j] = 0;
-	}
-	place_goal_randomly(value = 0) {
-		this.i_goal = Math.floor(Math.random() * this.rows);
-		this.j_goal = Math.floor(Math.random() * this.cols);
-
-		console.log("goal: ", this.i_goal, this.j_goal);
-		this.reward_matrix[this.i_goal][this.j_goal] = value;
-	}
-	clear_and_draw_buffer() {
-		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.ctx.drawImage(this.buffer, 0, 0);
-	}
-	fill_value_matrix() {
-		for(let i = 0; i < this.rows; i++) {
-			for(let j = 0; j < this.cols; j++) {
-				let color = this.compute_color_from_value(this.value_matrix[i][j]);
-				this.draw_cell(i, j, color);
-				this.fill_digit(i, j, color);
-			}
-		}
-	}
 	draw_goal() {
 		this.draw_cell(this.i_goal, this.j_goal, 'yellow');
 	}
@@ -346,8 +263,120 @@ class ValueIteration {
 			}
 		}
 	}
+	fill_top(i, j, color)    { this.fill_cell(i, j, 0, -1, color); }
+	fill_bottom(i, j, color) { this.fill_cell(i, j, 1, -1, color); }
+	fill_left(i, j, color)   { this.fill_cell(i, j, 0,  0, color); }
+	fill_right(i, j, color)  { this.fill_cell(i, j, 0,  1, color); }
+	
+	fill_cell(i, j, bottom, right, color) {
+		let style = this.ctx.fillStyle;
+		this.ctx.fillStyle = color
+
+		let w = this.ctx.lineWidth;
+		let h = w;
+
+		let vertical = right != -1 ? 1 : 0;
+		
+		this.ctx.fillRect((j+1+vertical*right) * this.row_step + w/2 - vertical * w,
+					  (i+1+bottom) * this.col_step + h/2 - (1-vertical) * h,
+					  w + (1-vertical) * (this.col_step - 2 * w),
+					  h + vertical * (this.row_step -2 * h));
+		
+		this.ctx.fillStyle = style;
+	}
+	fill_digit(i, j, color) {
+		//let digit = parseInt(str[i].charAt(j),16);
+		let digit = this.matrix[i][j];
+
+ 		if(digit & ways.UP) {
+			this.fill_top(i, j, color);
+		}
+ 		if(digit & ways.RIGHT) {
+			this.fill_right(i, j, color);
+		}
+ 		if(digit & ways.DOWN) {
+			this.fill_bottom(i, j, color);
+		}
+ 		if(digit & ways.LEFT) {
+			this.fill_left(i, j, color);
+		}
+	}
+	fill_value_matrix() {
+		for(let i = 0; i < this.rows; i++) {
+			for(let j = 0; j < this.cols; j++) {
+				let color = this.compute_color_from_value(this.value_matrix[i][j]);
+				this.draw_cell(i, j, color);
+				this.fill_digit(i, j, color);
+			}
+		}
+	}
+	fill_until_converge() {
+		let counter = 0;
+		let that = this;
+		
+		function helper() {
+			counter++;
+			that.iteration(1);
+		
+			that.fill_value_matrix();
+			that.draw_value_matrix();
+			
+			if( !that.equal_matrix(that.value_matrix, that.new_value_matrix) ) {
+				that.copy_matrix(that.new_value_matrix, that.value_matrix);
+				that.animation_request = requestAnimationFrame( () => helper() );
+			}
+			else {
+				console.log( (counter - 1) + " iterations before convergence.");
+			}
+		}
+
+		this.animation_request = requestAnimationFrame(helper);
+	}
+	stop_fill_until_converge () {
+		cancelAnimationFrame(this.animation_request);
+	}
+	// For animated maze creation
+	remove_grid_and_iterate(counter = 0) {
+		let j = counter % this.cols;
+		let i = (counter - j) / this.cols;
+
+		this.fill_digit(i, j, 'white');
+
+		if(counter < this.rows * this.cols) {
+			requestAnimationFrame(() => this.remove_grid_and_iterate(counter + 1));
+		}
+	}
+	place_goal(i, j) {
+		this.reward_matrix[i][j] = 0;
+	}
+	place_goal_randomly(value = 0) {
+		this.i_goal = Math.floor(Math.random() * this.rows);
+		this.j_goal = Math.floor(Math.random() * this.cols);
+
+		console.log("goal: ", this.i_goal, this.j_goal);
+		this.reward_matrix[this.i_goal][this.j_goal] = value;
+	}
+	clear_canvas() {
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	}
+	clear_and_draw_buffer() {
+		this.clear_canvas();
+		this.ctx.drawImage(this.buffer, 0, 0);
+	}
+	clear_maze() {
+		for(let i = 0; i < this.rows; i++) {
+			for(let j = 0; j < this.cols; j++) {
+				this.fill_digit(i, j, 'white');
+			}
+		}
+	}
 	reset_value_matrix() {
 		this.reset_matrix(this.value_matrix);
+	}
+	reset_all() {
+		this.reset_matrix(this.value_matrix);
+		this.reset_matrix(this.new_value_matrix);
+		this.reset_matrix(this.reward_matrix, -1);
 	}
 	log() {
 		console.log(this.canvas);
@@ -416,6 +445,33 @@ class ValueIteration {
 	}
 }
 
-var iter = new ValueIteration(str.length, str[0].length);
-//iter.fill_until_converge();
-//iter.fill_after_iterations(200);
+function request_json_maze(canvas, rows=15, cols=15) {
+	let request = new XMLHttpRequest();
+	let url = "http://www.lespursetdurs.fr/maze/?rows=" + rows + "&cols=" + cols +"&json";
+	let that = this;
+	
+	request.open("GET", url, true);
+	request.responseType = "text";
+	request.onload = function(e) {
+		let matrix = JSON.parse(request.response);
+		console.log(matrix);
+
+		new ValueIteration(canvas, matrix);
+	}
+	request.send();	
+}
+
+function main(matrix) {
+
+	var canvas = document.getElementById('main_canvas');
+	var canvas2 = document.getElementById('second_canvas');
+	
+	var iter = new ValueIteration(canvas, matrix);
+	var iter2 = new ValueIteration(canvas2, matrix);
+
+	//iter.fill_until_converge();
+	//iter.fill_after_iterations(200);
+}
+
+main(matrix_test);
+
