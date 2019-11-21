@@ -456,22 +456,22 @@ function request_json_maze(canvas, rows=15, cols=15) {
 		let matrix = JSON.parse(request.response);
 		console.log(matrix);
 
-		new ValueIteration(canvas, matrix);
+		return new ValueIteration(canvas, matrix);
 	}
 	request.send();	
 }
 
-function main(matrix) {
+//function main(matrix) {
 
 	var canvas = document.getElementById('main_canvas');
 	var canvas2 = document.getElementById('second_canvas');
 	
-	var iter = new ValueIteration(canvas, matrix);
-	var iter2 = new ValueIteration(canvas2, matrix);
+	var iter = new ValueIteration(canvas, matrix_test);
+	var iter2 = new ValueIteration(canvas2, matrix_test);
 
 	//iter.fill_until_converge();
 	//iter.fill_after_iterations(200);
-}
+//}
 
-main(matrix_test);
+//main(matrix_test);
 
