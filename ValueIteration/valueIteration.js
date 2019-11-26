@@ -180,28 +180,30 @@ class ValueIteration {
 		this.fill_value_matrix();
 		this.draw_value_matrix();
 	}
+	maximum_value(i, j, gamma) {
+		let values = [];
+		let c = this.matrix[i][j];
+		if(i > 0 && c & ways.UP) {
+			values.push(this.new_value(i, j, 'Up', gamma));
+		}
+		if(i < this.rows - 1 && c & ways.DOWN) {
+			values.push(this.new_value(i, j, 'Down', gamma));
+		}
+		if(j > 0 && c & ways.LEFT) {
+			values.push(this.new_value(i, j, 'Left', gamma));
+		}
+		if(j < this.cols - 1 && c & ways.RIGHT) {
+			values.push(this.new_value(i, j, 'Right', gamma));
+		}
+		// NoMove
+		values.push(this.value_matrix[i][j] + this.reward_matrix[i][j]);
+		
+		return Math.max(...values);
+	}
 	iteration(gamma = 1) {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
-				let values = [];
-				let c = this.matrix[i][j];
-				if(i > 0 && c & ways.UP) {
-					values.push(this.new_value(i, j, 'Up', gamma));
-				}
-				if(i < this.rows - 1 && c & ways.DOWN) {
-					values.push(this.new_value(i, j, 'Down', gamma));
-				}
-				if(j > 0 && c & ways.LEFT) {
-					values.push(this.new_value(i, j, 'Left', gamma));
-				}
-				if(j < this.cols - 1 && c & ways.RIGHT) {
-					values.push(this.new_value(i, j, 'Right', gamma));
-				}
-				// NoMove
-				values.push(this.value_matrix[i][j] + this.reward_matrix[i][j]);
-
-				let maximum = Math.max(...values);
-				this.new_value_matrix[i][j] = maximum;
+				this.new_value_matrix[i][j] = this.maximum_value(i, j, gamma);
 			}
 		}
 	}
@@ -334,8 +336,10 @@ class ValueIteration {
 			if(that.draw_value_matrix_on) {
 				that.draw_value_matrix();
 			}
+
+			console.log(that.equal_matrix(that.value_matrix, that.new_value_matrix));
 			
-			if( !that.equal_matrix(that.value_matrix, that.new_value_matrix) ) {
+			if( counter < that.rows * that.cols ) {
 				that.copy_matrix(that.new_value_matrix, that.value_matrix);
 				that.animation_request = requestAnimationFrame( () => helper() );
 			}
@@ -405,12 +409,17 @@ class ValueIteration {
 			const x = -1 + Math.floor((event.clientX - rect.left) / that.col_step);
 			const y = -1 + Math.floor((event.clientY - rect.top) / that.row_step);
 
+			/*
 			that.reset_all();
 			that.place_goal(y, x);
 			that.stop_fill_until_converge();
 			that.fill_until_converge();
-			
+			*/
+
 			console.log("x: " + x + " y: " + y);
+			console.log(that.value_matrix[y][x]);
+			console.log(that.reward_matrix[y][x]);
+			console.log(that.maximum_value(y, x, 1))
 		});
 	}
 	vi_listener(event, vI) {
@@ -466,7 +475,7 @@ class ValueIteration {
 			}
 		}
 	}
-	equal_matrix(m1, m2, epsilon = 0.01) {
+	equal_matrix(m1, m2, epsilon = 0.1) {
 		let n = m1.length;
 		let p = m1[0].length;
 
