@@ -18,6 +18,11 @@
   -clear value_matrix
 */
 
+var bug = "[[6,8,6,14,14,8,6,10,14,12,6,10,12,6,10,12,2,14,14,8,6,10,14,12,2,14,10,10,10,14,12,2,10,14,10,12,6,12,6,10,10,10,12,2,10,14,10,12,2,10,10,14,14,14,8,6,10,14,12,6,12,6,10,14,10,10,10,10,10,10,12,6,10,14,10,8,6,14,10,12],[5,6,9,5,5,6,9,4,5,3,9,4,5,7,12,3,12,1,3,14,11,8,5,3,12,1,6,10,10,9,5,6,10,9,6,9,5,5,3,12,2,12,5,6,12,3,12,3,12,6,12,1,5,1,6,11,8,5,5,5,5,3,12,3,12,6,12,4,6,12,5,1,6,13,6,10,9,3,12,1],[3,9,6,9,5,5,6,13,5,6,10,9,5,1,3,12,3,10,12,1,6,10,9,4,3,12,3,12,4,6,9,5,6,12,5,6,9,7,12,5,6,13,3,9,5,6,9,4,3,9,3,12,3,10,9,6,10,9,5,5,7,8,5,4,3,9,5,5,5,3,9,6,9,1,3,10,10,12,3,12],[6,12,5,6,9,5,1,5,5,3,10,12,3,10,10,9,6,8,7,10,9,6,12,3,14,9,6,9,3,11,12,3,9,5,5,3,12,5,1,5,5,1,6,12,3,9,2,15,10,10,8,5,6,10,10,9,4,6,9,5,1,6,9,7,12,6,9,5,5,6,10,11,10,10,14,12,4,5,4,5],[5,3,9,1,6,9,6,9,3,12,6,13,6,10,14,12,7,10,9,6,10,9,3,12,5,2,11,10,12,4,3,10,10,9,5,2,9,5,6,9,3,14,9,5,6,14,12,5,6,10,12,3,9,4,6,10,11,9,6,11,12,3,12,5,1,5,4,7,9,3,12,4,6,10,9,3,9,5,5,5],[7,10,12,6,9,2,15,12,6,9,5,1,5,4,5,5,3,12,6,9,2,14,12,5,3,10,10,10,9,7,10,14,10,8,5,6,10,13,3,10,12,3,12,5,5,5,3,9,5,4,3,10,10,11,9,4,6,12,3,12,3,10,9,5,6,9,7,9,2,14,11,9,3,10,12,6,10,11,9,5],[1,6,13,5,6,12,1,5,5,6,13,6,11,9,5,1,6,9,3,10,12,5,1,3,10,12,6,10,8,5,4,3,10,10,11,9,4,7,10,8,5,6,9,3,9,3,10,12,5,7,14,8,6,10,10,11,9,7,10,11,10,10,10,13,3,12,3,10,12,1,6,12,6,12,3,9,6,10,12,5],[6,9,1,5,5,5,6,13,5,5,3,9,6,12,7,12,5,2,14,12,5,5,6,10,10,9,3,10,10,15,11,8,6,10,12,6,11,9,6,12,5,3,10,10,12,6,12,3,9,5,1,6,11,8,6,10,12,5,6,10,10,10,12,3,12,3,12,4,3,10,9,3,9,3,10,10,9,6,9,5],[7,10,12,3,9,3,9,5,5,3,8,6,9,5,1,3,11,12,5,1,5,5,3,10,12,6,10,10,12,5,6,10,9,6,9,3,12,6,9,3,9,6,8,6,9,5,5,6,10,11,10,13,6,10,9,6,9,1,5,6,10,8,5,6,9,4,5,7,12,6,10,10,10,10,10,10,10,9,2,13],[5,4,7,8,6,10,10,9,5,6,10,11,8,3,10,10,12,7,9,6,9,7,10,12,3,9,6,10,9,5,5,2,12,5,2,10,9,3,12,6,8,7,10,9,6,9,5,3,8,6,12,1,5,6,10,9,6,14,9,7,10,10,9,5,2,13,5,5,3,9,6,10,10,10,12,6,8,6,14,9],[3,9,5,6,9,6,12,6,13,5,6,10,10,10,12,6,9,1,6,9,4,3,12,3,14,8,3,12,2,9,3,12,5,3,10,12,6,10,9,7,10,9,6,12,5,4,3,12,6,9,3,12,5,3,12,6,9,5,4,3,12,6,8,3,14,9,5,3,10,12,5,6,12,6,9,7,10,9,3,12],[6,12,3,11,8,5,3,9,1,5,5,6,10,10,9,7,10,12,5,2,15,12,3,12,3,10,12,3,10,10,10,9,7,10,10,9,3,12,2,11,12,6,9,5,5,7,8,7,9,2,10,13,3,12,5,1,6,9,5,6,9,3,14,8,5,6,9,2,10,11,9,5,5,5,4,5,2,14,12,5],[5,3,10,10,14,9,6,10,10,9,5,5,6,10,12,1,6,13,5,6,9,3,12,5,6,12,7,10,8,6,14,8,3,12,2,10,14,9,6,12,3,9,6,9,5,7,10,9,6,10,12,3,12,5,5,6,9,6,9,3,10,12,5,6,9,3,12,6,10,12,4,5,3,9,5,3,10,9,5,5],[3,12,4,6,9,6,9,6,12,6,9,7,9,2,11,14,9,1,5,5,6,8,5,5,1,5,3,10,10,9,3,10,12,3,10,12,3,14,9,5,6,12,5,6,9,7,10,8,3,12,5,4,5,5,3,9,4,7,10,10,10,9,3,11,10,12,5,5,6,9,7,9,6,10,13,6,10,10,9,5],[6,9,3,13,4,3,12,5,1,5,2,9,6,12,2,9,6,10,9,5,3,12,5,5,6,11,10,12,2,12,6,12,3,14,12,3,12,3,8,5,5,3,9,5,2,9,6,12,6,9,5,5,3,9,6,12,7,9,4,6,14,12,6,10,12,1,3,13,5,4,3,12,7,12,1,3,12,4,6,9],[5,6,12,3,11,8,5,5,6,13,6,10,9,3,10,12,5,6,12,7,12,3,9,5,7,12,2,11,10,13,5,3,12,5,5,4,3,10,10,9,3,12,6,9,6,10,9,3,9,6,9,7,12,6,9,3,9,2,15,9,5,5,5,4,3,10,12,5,5,7,8,5,5,3,10,10,11,9,7,12],[5,5,3,10,12,6,9,5,5,1,5,2,14,12,4,5,3,9,5,1,3,14,10,9,1,3,12,4,6,9,5,2,11,9,3,15,10,10,10,8,6,9,3,14,11,8,6,10,12,5,2,13,1,5,2,14,10,12,1,6,9,3,9,7,12,6,9,1,5,3,10,13,3,10,12,6,10,12,1,5],[3,11,8,6,9,5,2,13,3,10,9,6,9,3,13,3,10,12,5,2,12,3,10,12,6,10,9,5,5,4,5,6,12,2,10,9,6,10,10,10,9,6,12,3,8,6,9,4,3,9,6,9,6,9,6,9,6,9,6,9,6,10,8,5,5,3,10,12,3,10,12,3,10,12,1,5,4,3,10,13],[6,10,10,9,6,9,6,13,2,14,12,3,12,6,9,4,6,9,3,10,9,6,12,5,5,6,14,9,5,5,3,9,3,10,10,12,5,2,14,12,2,13,5,6,12,5,6,11,8,6,11,12,5,6,9,4,3,12,5,6,13,6,10,9,5,6,12,5,6,12,5,6,8,5,6,9,7,8,6,9],[3,10,10,10,11,10,9,3,10,9,3,10,9,3,10,9,3,10,10,10,10,9,3,11,9,1,3,10,11,11,10,10,10,10,8,3,11,10,9,3,10,9,3,9,3,9,3,10,10,11,8,3,11,9,2,11,10,11,9,1,3,11,10,8,3,9,3,11,9,3,9,3,10,11,9,2,11,10,11,8]]"
+
+i_bug = 3;
+j_bug = 28;
+
 const actions = {
 	'UP': 'Up',
 	'DOWN': 'Down',
@@ -124,8 +129,10 @@ class DP {
 		
 		//this.fill_and_iterate();
 		this.clear_maze();
-		this.place_goal_randomly(0);
 
+		
+		this.place_goal_randomly(0);
+		
 		this.bufferCtx.drawImage(this.canvas, 0, 0);
 	}
 	init_sizes(coeff=0.8) {
@@ -162,15 +169,7 @@ class DP {
 			}
 		}
 		return matrix;
-	}
-	
-	new_value(i, j, action, gamma) {
-		let [I, J] = this.transition_function(i, j, action);
-		let new_value = this.reward_matrix[i][j] + gamma * this.value_matrix[I][J];
-
-		return new_value;
-	}
-
+	}	
 	fill_after_iterations(n) {
 		for(let i = 0; i <= n; i++) {
 			this.copy_matrix(this.new_value_matrix, this.value_matrix);
@@ -187,50 +186,29 @@ class DP {
 		if(i > 0 && c & ways.UP) {
 			actions.push('Up');
 		}
-		if(i < this.rows - 1 && c & ways.DOWN) {
+		if(i + 1 < this.rows && c & ways.DOWN) {
 			actions.push('Down');
 		}
 		if(j > 0 && c & ways.LEFT) {
 			actions.push('Left');
 		}
-		if(j < this.cols - 1 && c & ways.RIGHT) {
+		if(j + 1 < this.cols && c & ways.RIGHT) {
 			actions.push('Right');
 		}
 		
 		return actions;
 	}
 	maximum_value(i, j, gamma) {
-		let values = [];
-		let c = this.matrix[i][j];
-		if(i > 0 && c & ways.UP) {
-			values.push(this.new_value(i, j, 'Up', gamma));
-		}
-		if(i < this.rows - 1 && c & ways.DOWN) {
-			values.push(this.new_value(i, j, 'Down', gamma));
-		}
-		if(j > 0 && c & ways.LEFT) {
-			values.push(this.new_value(i, j, 'Left', gamma));
-		}
-		if(j < this.cols - 1 && c & ways.RIGHT) {
-			values.push(this.new_value(i, j, 'Right', gamma));
-		}
-		// NoMove
-		values.push(this.value_matrix[i][j] + this.reward_matrix[i][j]);
+		let actions = this.possible_actions(i, j);
+		let that = this;
+		
+		let values = actions.map( function(action) {
+			let [I, J] = that.transition_function(i, j, action);
+			return that.reward_matrix[i][j] + gamma * that.value_matrix[I][J];
+		});
 		
 		return Math.max(...values);
-	}
-	/* Not pure
-	 * Depend on this.rows, this.cols
-	 * Modify this.new_value_matrix
-	 */
-	iteration(gamma = 1) {
-		for(let i = 0; i < this.rows; i++) {
-			for(let j = 0; j < this.cols; j++) {
-				this.new_value_matrix[i][j] = this.maximum_value(i, j, gamma);
-			}
-		}
-	}
-	
+	}	
 	transition_function(i, j, action) {
 		let res_i = i;
 		let res_j = j;
@@ -353,6 +331,31 @@ class DP {
 			}
 		}
 	}
+	/* Not pure
+	 * Depend on this.rows, this.cols
+	 * Modify this.new_value_matrix
+	 */
+	iteration(gamma=1) {
+		for(let i = 0; i < this.rows; i++) {
+			for(let j = 0; j < this.cols; j++) {
+				this.new_value_matrix[i][j] = this.maximum_value(i, j, gamma);
+			}
+		}
+	}
+	converge() {
+		let done = false;
+		let I = 0;
+		for(let i = 0; i < this.rows * this.cols; i++) {
+			this.iteration(1);
+			let eq = DP.equal_matrix(this.value_matrix, this.new_value_matrix);
+			if(eq && !done) {
+				done = true;
+				I=i;
+			}
+			this.copy_matrix(this.new_value_matrix, this.value_matrix);
+		}
+		return I;
+	}
 	fill_until_converge() {
 		let counter = 0;
 		let that = this;
@@ -366,9 +369,11 @@ class DP {
 				that.draw_value_matrix();
 			}
 
-			console.log(DP.equal_matrix(that.value_matrix, that.new_value_matrix));
+			let eq = DP.equal_matrix(that.value_matrix, that.new_value_matrix);
+			console.log(eq);
 			
-			if( counter < that.rows * that.cols ) {
+			if(!eq) {
+			//if( counter < that.rows * that.cols ) {
 				that.copy_matrix(that.new_value_matrix, that.value_matrix);
 				that.animation_request = requestAnimationFrame( () => helper() );
 			}
@@ -512,6 +517,20 @@ class DP {
 		}
 		return true;
 	}
+	static min(matrix) {
+		let n = matrix.length;
+		let p = matrix[0].length;
+		let min = Number.POSITIVE_INFINITY;
+		
+		for(let i = 0; i < n; i++) {
+			for(let j = 0; j < n; j++) {
+				if(matrix[i][j] < min) {
+					min = matrix[i][j];
+				}
+			}
+		}
+		return min;
+	}
 }
 
 function request_json_maze(canvas, rows=15, cols=15) {
@@ -534,6 +553,6 @@ var canvas = document.getElementById('main_canvas');
 var canvas2 = document.getElementById('second_canvas');
 
 var iter = new DP(canvas, matrix_test);
-var iter2 = new DP(canvas2, matrix_test);
+var iter2 = new DP(canvas2, JSON.parse(bug));
 
 
