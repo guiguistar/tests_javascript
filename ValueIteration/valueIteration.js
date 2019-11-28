@@ -93,7 +93,7 @@ var codes = [  0x20,
 			   0x253c, 
 			]
 
-class ValueIteration {
+class DP {
 	constructor(canvas, matrix) {
 		this.canvas = canvas; // once
 		this.draw_value_matrix_on = true;
@@ -111,9 +111,9 @@ class ValueIteration {
 		this.log();
 
 		this.matrix           = matrix;
-		this.reward_matrix    = this.create_and_initialize_matrix(this.rows, this.cols, (i, j) => -1);
-		this.value_matrix     = this.create_and_initialize_matrix(this.rows, this.cols, (i, j) => 0);
-		this.new_value_matrix = this.create_and_initialize_matrix(this.rows, this.cols, (i, j) => 0);
+		this.reward_matrix    = this.create_matrix(this.rows, this.cols, (i, j) => -1);
+		this.value_matrix     = this.create_matrix(this.rows, this.cols, (i, j) => 0);
+		this.new_value_matrix = this.create_matrix(this.rows, this.cols, (i, j) => 0);
 
 		this.buffer = document.createElement('canvas');
 		this.buffer.width = this.canvas.width;
@@ -153,7 +153,7 @@ class ValueIteration {
 			this.draw_value_matrix();
 		}
 	}
-	create_and_initialize_matrix(n, p, f) {
+	create_matrix(n, p, f) {
 		let matrix = []
 		for(let i = 0; i < n; i++) {
 			matrix.push([]);
@@ -165,8 +165,8 @@ class ValueIteration {
 	}
 	
 	new_value(i, j, action, gamma) {
-		let move = this.transition(i, j, action);
-		let new_value = this.reward_matrix[i][j] + gamma * this.value_matrix[move[0]][move[1]];
+		let [I, J] = this.transition_function(i, j, action);
+		let new_value = this.reward_matrix[i][j] + gamma * this.value_matrix[I][J];
 
 		return new_value;
 	}
@@ -179,6 +179,25 @@ class ValueIteration {
 		this.clear_and_draw_buffer();
 		this.fill_value_matrix();
 		this.draw_value_matrix();
+	}
+	possible_actions(i, j) {
+		let actions = ['NoMove'];
+		let c = this.matrix[i][j];
+		
+		if(i > 0 && c & ways.UP) {
+			actions.push('Up');
+		}
+		if(i < this.rows - 1 && c & ways.DOWN) {
+			actions.push('Down');
+		}
+		if(j > 0 && c & ways.LEFT) {
+			actions.push('Left');
+		}
+		if(j < this.cols - 1 && c & ways.RIGHT) {
+			actions.push('Right');
+		}
+		
+		return actions;
 	}
 	maximum_value(i, j, gamma) {
 		let values = [];
@@ -200,6 +219,10 @@ class ValueIteration {
 		
 		return Math.max(...values);
 	}
+	/* Not pure
+	 * Depend on this.rows, this.cols
+	 * Modify this.new_value_matrix
+	 */
 	iteration(gamma = 1) {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
@@ -208,7 +231,7 @@ class ValueIteration {
 		}
 	}
 	
-	transition(i, j, action) {
+	transition_function(i, j, action) {
 		let res_i = i;
 		let res_j = j;
 
@@ -224,6 +247,8 @@ class ValueIteration {
 			break;
 		case actions.RIGHT:
 			res_j += 1;
+			break;
+		case actions.NO_MOVE:
 			break;
 		default:
 			break;
@@ -290,7 +315,11 @@ class ValueIteration {
 		let h = w;
 
 		let vertical = right != -1 ? 1 : 0;
-		
+
+		/*
+		 * the fillRect cover the strokeline according to the bottom
+		 * and right variables.
+		 */
 		this.ctx.fillRect((j+1+vertical*right) * this.row_step + w/2 - vertical * w,
 					  (i+1+bottom) * this.col_step + h/2 - (1-vertical) * h,
 					  w + (1-vertical) * (this.col_step - 2 * w),
@@ -318,7 +347,7 @@ class ValueIteration {
 	fill_value_matrix() {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
-				let color = this.compute_color_from_value(this.value_matrix[i][j]);
+				let color = DP.compute_color_from_value(this.value_matrix[i][j]);
 				this.draw_cell(i, j, color);
 				this.fill_digit(i, j, color);
 			}
@@ -337,7 +366,7 @@ class ValueIteration {
 				that.draw_value_matrix();
 			}
 
-			console.log(that.equal_matrix(that.value_matrix, that.new_value_matrix));
+			console.log(DP.equal_matrix(that.value_matrix, that.new_value_matrix));
 			
 			if( counter < that.rows * that.cols ) {
 				that.copy_matrix(that.new_value_matrix, that.value_matrix);
@@ -389,18 +418,30 @@ class ValueIteration {
 		}
 	}
 	reset_value_matrix() {
-		this.reset_matrix(this.value_matrix);
+		DP.reset_matrix(this.value_matrix);
 	}
 	reset_all() {
-		this.reset_matrix(this.value_matrix);
-		this.reset_matrix(this.new_value_matrix);
-		this.reset_matrix(this.reward_matrix, -1);
+		DP.reset_matrix(this.value_matrix);
+		DP.reset_matrix(this.new_value_matrix);
+		DP.reset_matrix(this.reward_matrix, -1);
 	}
 	log() {
 		console.log(this.canvas);
 		console.log(this.canvas.width, this.canvas.height);
 		console.log("rows: ", this.rows, ", cols: ", this.cols);
 		console.log("row_step: ",this.row_step, ", col_step: ", this.col_step);
+	}
+	action_one(i, j) {
+		this.reset_all();
+		this.place_goal(i, j);
+		this.stop_fill_until_converge();
+		this.fill_until_converge();
+	}
+	action_two(i, j) {
+		console.log("i: " + i + " j: " + j);
+		console.log(this.value_matrix[i][j]);
+		console.log(this.reward_matrix[i][j]);
+		console.log(this.maximum_value(i, j, 1));
 	}
 	attach_listeners() {
 		let that = this;
@@ -409,17 +450,9 @@ class ValueIteration {
 			const x = -1 + Math.floor((event.clientX - rect.left) / that.col_step);
 			const y = -1 + Math.floor((event.clientY - rect.top) / that.row_step);
 
-			/*
-			that.reset_all();
-			that.place_goal(y, x);
-			that.stop_fill_until_converge();
-			that.fill_until_converge();
-			*/
+			that.action_one(y, x);
+			that.action_two(y, x);
 
-			console.log("x: " + x + " y: " + y);
-			console.log(that.value_matrix[y][x]);
-			console.log(that.reward_matrix[y][x]);
-			console.log(that.maximum_value(y, x, 1))
 		});
 	}
 	request_json_maze(rows=15, cols=15) {
@@ -438,13 +471,13 @@ class ValueIteration {
 	}
 
 	// This four should be static
-	compute_color_from_value(value) {
+	static compute_color_from_value(value) {
 		//let color = 'hsl(240, 80%, ' + (100 + 0.5 * this.value_matrix[i][j]) + '%)';
 		let color = 'hsl(' + (360 - value) + ', 80%, 50%)';
 
 		return color;
 	}
-	reset_matrix(matrix, coeff = 0) {
+	static reset_matrix(matrix, coeff = 0) {
 		let n = matrix.length;
 		let p = matrix[0].length;
 		for(let i = 0; i < n; i++) {
@@ -463,7 +496,7 @@ class ValueIteration {
 			}
 		}
 	}
-	equal_matrix(m1, m2, epsilon = 0.1) {
+	static equal_matrix(m1, m2, epsilon = 0.1) {
 		let n = m1.length;
 		let p = m1[0].length;
 
@@ -492,7 +525,7 @@ function request_json_maze(canvas, rows=15, cols=15) {
 		let matrix = JSON.parse(request.response);
 		console.log(matrix);
 
-		return new ValueIteration(canvas, matrix);
+		return new DP(canvas, matrix);
 	}
 	request.send();	
 }
@@ -500,7 +533,7 @@ function request_json_maze(canvas, rows=15, cols=15) {
 var canvas = document.getElementById('main_canvas');
 var canvas2 = document.getElementById('second_canvas');
 
-var iter = new ValueIteration(canvas, matrix_test);
-var iter2 = new ValueIteration(canvas2, matrix_test);
+var iter = new DP(canvas, matrix_test);
+var iter2 = new DP(canvas2, matrix_test);
 
 
