@@ -422,18 +422,6 @@ class ValueIteration {
 			console.log(that.maximum_value(y, x, 1))
 		});
 	}
-	vi_listener(event, vI) {
-		const rect = vI.canvas.getBoundingClientRect();
-		const x = -1 + Math.floor((event.clientX - rect.left) / vI.col_step);
-		const y = -1 + Math.floor((event.clientY - rect.top) / vI.row_step);
-
-		vI.reset_all();
-		vI.place_goal(y, x);
-		vI.stop_fill_until_converge();
-		vI.fill_until_converge();
-		
-		console.log("x: " + x + " y: " + y);
-	}
 	request_json_maze(rows=15, cols=15) {
 		let request = new XMLHttpRequest();
 		let url = "http://www.lespursetdurs.fr/maze/?rows=" + rows + "&cols=" + cols +"&json";
