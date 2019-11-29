@@ -116,9 +116,9 @@ class DP {
 		this.log();
 
 		this.matrix           = matrix;
-		this.reward_matrix    = this.create_matrix(this.rows, this.cols, (i, j) => -1);
-		this.value_matrix     = this.create_matrix(this.rows, this.cols, (i, j) => 0);
-		this.new_value_matrix = this.create_matrix(this.rows, this.cols, (i, j) => 0);
+		this.reward_matrix    = DP.create_matrix(this.rows, this.cols, (i, j) => -1);
+		this.value_matrix     = DP.create_matrix(this.rows, this.cols, (i, j) => 0);
+		this.new_value_matrix = DP.create_matrix(this.rows, this.cols, (i, j) => 0);
 
 		this.buffer = document.createElement('canvas');
 		this.buffer.width = this.canvas.width;
@@ -160,16 +160,6 @@ class DP {
 			this.draw_value_matrix();
 		}
 	}
-	create_matrix(n, p, f) {
-		let matrix = []
-		for(let i = 0; i < n; i++) {
-			matrix.push([]);
-			for(let j = 0; j < p; j++) {
-				matrix[i].push(f(i, j));
-			}
-		}
-		return matrix;
-	}	
 	fill_after_iterations(n) {
 		for(let i = 0; i <= n; i++) {
 			this.copy_matrix(this.new_value_matrix, this.value_matrix);
@@ -475,7 +465,25 @@ class DP {
 		request.send();	
 	}
 
-	// This four should be static
+	// static method
+	copy_matrix(src, dst) {
+		let n = src.length;
+		let p = src[0].length;
+		
+		for(let i = 0; i < n; i++) {
+			dst[i] = src[i].slice();
+		}
+	}
+	static create_matrix(n, p, f) {
+		let matrix = []
+		for(let i = 0; i < n; i++) {
+			matrix.push([]);
+			for(let j = 0; j < p; j++) {
+				matrix[i].push(f(i, j));
+			}
+		}
+		return matrix;
+	}	
 	static compute_color_from_value(value) {
 		//let color = 'hsl(240, 80%, ' + (100 + 0.5 * this.value_matrix[i][j]) + '%)';
 		let color = 'hsl(' + (360 - value) + ', 80%, 50%)';
@@ -486,19 +494,9 @@ class DP {
 		let n = matrix.length;
 		let p = matrix[0].length;
 		for(let i = 0; i < n; i++) {
-			for(let j = 0; j < p; j++) {
-				matrix[i][j] = coeff;
-			}
-		}
-	}
-	copy_matrix(src, dst) {
-		let n = src.length;
-		let p = src[0].length;
-		
-		for(let i = 0; i < n; i++) {
-			for(let j = 0; j < p; j++) {
-				dst[i][j] = src[i][j];
-			}
+			// is that clear?
+			matrix[i].forEach( function(value, index){ this[index] = coeff; },
+							   matrix[i]);
 		}
 	}
 	static equal_matrix(m1, m2, epsilon = 0.1) {
@@ -509,7 +507,7 @@ class DP {
 			return false;
 		}
 		for(let i = 0; i < n; i++) {
-			for(let j = 0; j < n; j++) {
+			for(let j = 0; j < p; j++) {
 				if(Math.abs(m1[i][j] - m2[i][j]) > epsilon) {
 					return false;
 				}
@@ -518,18 +516,7 @@ class DP {
 		return true;
 	}
 	static min(matrix) {
-		let n = matrix.length;
-		let p = matrix[0].length;
-		let min = Number.POSITIVE_INFINITY;
-		
-		for(let i = 0; i < n; i++) {
-			for(let j = 0; j < n; j++) {
-				if(matrix[i][j] < min) {
-					min = matrix[i][j];
-				}
-			}
-		}
-		return min;
+		return Math.min(...matrix.map(row => Math.min(...row)))
 	}
 }
 
@@ -554,5 +541,6 @@ var canvas2 = document.getElementById('second_canvas');
 
 var iter = new DP(canvas, matrix_test);
 var iter2 = new DP(canvas2, JSON.parse(bug));
-
-
+iter2.reward_matrix = DP.create_matrix(iter2.rows, iter2.cols, (i, j) => -1);
+iter2.place_goal(3, 28);
+iter2.draw_reward_matrix();
