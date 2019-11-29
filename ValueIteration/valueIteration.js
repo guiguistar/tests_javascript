@@ -251,22 +251,20 @@ class DP {
 						  this.row_step - this.ctx.lineWidth);
 		this.ctx.fillStyle = style;
 	}
-	draw_reward_matrix() {
-		for(let i = 0; i < this.rows; i++) {
-			for(let j = 0; j < this.cols; j++) {
-				let value = this.reward_matrix[i][j];
-				if(value == 0) {
-					this.draw_cell(i, j, 'yellow');
-				}
-				this.ctx.fillText(value, (j+1.25) * this.col_step, (i+1.7) * this.row_step);
-			}
-		}
-	}
 	draw_value_matrix() {
-		for(let i = 0; i < this.rows; i++) {
-			for(let j = 0; j < this.cols; j++) {
-				let value = this.value_matrix[i][j];
-				this.ctx.fillText(value, (j+1.15) * this.col_step, (i+1.7) * this.row_step);
+		this.draw_matrix(this.value_matrix);
+	}
+	draw_reward_matrix() {
+		this.draw_goal();
+		this.draw_matrix(this.reward_matrix, 1.7, 1.25);
+	}
+	draw_matrix(matrix, di=1.7, dj=1.15) {
+		let n = matrix.length;
+		let p = matrix[0].length;
+		for(let i = 0; i < n; i++) {
+			for(let j = 0; j < p; j++) {
+				let value = matrix[i][j];
+				this.ctx.fillText(value, (j+dj) * this.col_step, (i+di) * this.row_step);
 			}
 		}
 	}
@@ -285,7 +283,7 @@ class DP {
 		let vertical = right != -1 ? 1 : 0;
 
 		/*
-		 * the fillRect cover the strokeline according to the bottom
+		 * the fillRect cover the rect + the strokeline according to the bottom
 		 * and right variables.
 		 */
 		this.ctx.fillRect((j+1+vertical*right) * this.row_step + w/2 - vertical * w,
@@ -296,7 +294,6 @@ class DP {
 		this.ctx.fillStyle = style;
 	}
 	fill_digit(i, j, color) {
-		//let digit = parseInt(str[i].charAt(j),16);
 		let digit = this.matrix[i][j];
 
  		if(digit & ways.UP) {
@@ -468,7 +465,6 @@ class DP {
 	// static method
 	copy_matrix(src, dst) {
 		let n = src.length;
-		let p = src[0].length;
 		
 		for(let i = 0; i < n; i++) {
 			dst[i] = src[i].slice();
