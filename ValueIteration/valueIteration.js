@@ -380,7 +380,8 @@ class DP {
 		function helper() {
 			//console.log('(i,j)=' + '(' + i + ',' + j + ')');
 			[current_i, current_j] = that.maximum_neighbor(that.value_matrix, current_i, current_j);
-			that.ctx.strokeRect((current_j+1.25)*that.col_step, (current_i+1.25)*that.row_step, 10, 10);
+			that.ctx.fillStyle = DP.compute_color_from_value(that.value_matrix[current_i][current_j] + 180);
+			that.ctx.fillRect((current_j+1.25)*that.col_step, (current_i+1.25)*that.row_step, 5, 5);
 			//that.ctx.fillText(that.value_matrix[current_i][current_j], (current_j+1.5)*that.col_step, (current_i+0.5)*that.row_step, 10, 10);
 			if( current_i != that.i_goal || current_j != that.j_goal) {
 				requestAnimationFrame(helper);
@@ -390,18 +391,18 @@ class DP {
 	}
 	maximum_neighbor(matrix, i, j) {
 		let actions = this.possible_actions(i, j);
-		let max = matrix[i][j];
-		let I = i;
-		let J = j;
+		let values = [];
 		for(let k = 0; k < actions.length; k++) {
-			let [dI, dJ] = moves[actions[k]];
-			if(matrix[I+dI][J+dJ] > max) {
-				max = matrix[I+dI][J+dJ];
-				I += dI;
-				J += dJ; 
-			}
+			let [di, dj] = moves[actions[k]];
+			let I = i+di;
+			let J = j+dj;
+			values.push([this.value_matrix[I][J], I, J]);
 		}
-		return [I, J]
+		values.sort((a, b) => b[0] - a[0]);
+		console.log(values);
+		let max = values[0];
+		
+		return [max[1], max[2]];
 	}
 	stop_fill_until_converge () {
 		cancelAnimationFrame(this.animation_request);
@@ -486,10 +487,10 @@ class DP {
 
 			//that.action_one(y, x);
 			that.action_two(y, x);
-			//that.action_three(y, x);
+			that.action_three(y, x);
 			console.log(that.possible_actions(y, x));
 			console.log(that.maximum_neighbor(that.value_matrix, y, x));
-			that.ctx.strokeRect((x+1.25)*that.col_step, (y+1.25)*that.row_step, 10, 10);
+			//that.ctx.strokeRect((x+1.25)*that.col_step, (y+1.25)*that.row_step, 10, 10);
 		});
 	}
 	request_json_maze(rows=15, cols=15) {
