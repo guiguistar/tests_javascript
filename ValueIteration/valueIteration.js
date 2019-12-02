@@ -110,6 +110,11 @@ class DP {
 		this.attach_listeners();
 	}
 	init_matrix(matrix) {
+		this.config = {
+			wallWidth: 2,
+			pathWidth: 6,
+		}
+		
 		this.matrix = matrix;
 		this.rows = matrix.length;
 		this.cols = matrix[0].length;
@@ -149,7 +154,7 @@ class DP {
 
 		this.canvas.width = (this.cols + 2) * this.size;
 		this.canvas.height = (this.rows + 2) * this.size;
-		this.ctx.lineWidth = 2;
+		this.ctx.lineWidth = this.config.wallWidth;
 		this.ctx.lineCap = 'round';
 		this.ctx.font = '' + (this.size - 2 * this.ctx.lineWidth) / 3 + 'px monospace';
 		
@@ -315,6 +320,7 @@ class DP {
 		}
 	}
 	fill_value_matrix() {
+		this.ctx.lineWidth = this.config.wallWidth;
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
 				let color = DP.compute_color_from_value(this.value_matrix[i][j]);
@@ -376,18 +382,37 @@ class DP {
 		let that = this;
 		let current_i = i;
 		let current_j = j;
-		
+
+		let sStyle = this.ctx.strokeStyle;
+		this.ctx.lineWidth = this.config.pathWidth;
+
 		function helper() {
 			//console.log('(i,j)=' + '(' + i + ',' + j + ')');
-			[current_i, current_j] = that.maximum_neighbor(that.value_matrix, current_i, current_j);
-			that.ctx.fillStyle = DP.compute_color_from_value(that.value_matrix[current_i][current_j] + 180);
-			that.ctx.fillRect((current_j+1.25)*that.col_step, (current_i+1.25)*that.row_step, 5, 5);
+			let current_x = (current_j + 1.5) * that.col_step;
+			let current_y = (current_i + 1.5) * that.row_step;
+
+			let [new_i, new_j] = that.maximum_neighbor(that.value_matrix, current_i, current_j);
+			let new_x = (new_j + 1.5) * that.col_step;
+			let new_y = (new_i + 1.5) * that.row_step;
+			
+			that.ctx.strokeStyle = DP.compute_color_from_value(that.value_matrix[new_i][new_j] + 180);
+			//that.ctx.fillRect(j, i, 5, 5);
+			that.ctx.beginPath();
+			that.ctx.moveTo(current_x, current_y);
+			that.ctx.lineTo(new_x, new_y);
+			that.ctx.stroke();
 			//that.ctx.fillText(that.value_matrix[current_i][current_j], (current_j+1.5)*that.col_step, (current_i+0.5)*that.row_step, 10, 10);
 			if( current_i != that.i_goal || current_j != that.j_goal) {
+				current_i = new_i;
+				current_j = new_j;
 				requestAnimationFrame(helper);
 			}
+			else {
+				//at.ctx.lineWidth = that.config.wallWidth;
+				//that.ctx.strokeStyle = sStyle;
+			}
 		}
-		requestAnimationFrame(helper);		
+		requestAnimationFrame(helper);
 	}
 	maximum_neighbor(matrix, i, j) {
 		let actions = this.possible_actions(i, j);
@@ -399,7 +424,7 @@ class DP {
 			values.push([this.value_matrix[I][J], I, J]);
 		}
 		values.sort((a, b) => b[0] - a[0]);
-		console.log(values);
+		//console.log(values);
 		let max = values[0];
 		
 		return [max[1], max[2]];
@@ -474,8 +499,8 @@ class DP {
 		this.place_goal_randomly();
 		this.draw_goal();
 		this.converge();
-		this.draw_reward_matrix();
-		this.fill_value_matrix();
+		//this.draw_reward_matrix();
+		//this.fill_value_matrix();
 		this.fill_path_to_goal_from(i, j);
 	}
 	attach_listeners() {
