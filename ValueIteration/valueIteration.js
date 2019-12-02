@@ -113,6 +113,8 @@ class DP {
 		this.config = {
 			wallWidth: 2,
 			pathWidth: 6,
+			goal_color: 'orange',
+			clear_color: 'white',
 		}
 		
 		this.matrix = matrix;
@@ -250,7 +252,7 @@ class DP {
 		}
 	}
 	draw_goal() {
-		this.draw_cell(this.i_goal, this.j_goal, 'yellow');
+		this.draw_cell(this.i_goal, this.j_goal, this.config.goal_color);
 	}
 	draw_cell(i, j, color) {
 		let style = this.ctx.fillStyle;
@@ -278,12 +280,12 @@ class DP {
 			}
 		}
 	}
-	fill_top(i, j, color)    { this.fill_cell(i, j, 0, -1, color); }
-	fill_bottom(i, j, color) { this.fill_cell(i, j, 1, -1, color); }
-	fill_left(i, j, color)   { this.fill_cell(i, j, 0,  0, color); }
-	fill_right(i, j, color)  { this.fill_cell(i, j, 0,  1, color); }
+	fill_top(i, j, color)    { this.clear_line_with_rect(i, j, 0, -1, color); }
+	fill_bottom(i, j, color) { this.clear_line_with_rect(i, j, 1, -1, color); }
+	fill_left(i, j, color)   { this.clear_line_with_rect(i, j, 0,  0, color); }
+	fill_right(i, j, color)  { this.clear_line_with_rect(i, j, 0,  1, color); }
 	
-	fill_cell(i, j, bottom, right, color) {
+	clear_line_with_rect(i, j, bottom, right, color) {
 		let style = this.ctx.fillStyle;
 		this.ctx.fillStyle = color
 
@@ -364,10 +366,8 @@ class DP {
 			}
 
 			let eq = DP.equal_matrix(that.value_matrix, that.new_value_matrix);
-			console.log(eq);
 			
 			if(!eq) {
-			//if( counter < that.rows * that.cols ) {
 				that.copy_matrix(that.new_value_matrix, that.value_matrix);
 				that.animation_request = requestAnimationFrame(helper);
 			}
@@ -437,7 +437,7 @@ class DP {
 		let j = counter % this.cols;
 		let i = (counter - j) / this.cols;
 
-		this.fill_digit(i, j, 'white');
+		this.fill_digit(i, j, this.config.clear_color);
 
 		if(counter < this.rows * this.cols) {
 			requestAnimationFrame(() => this.remove_grid_and_iterate(counter + 1));
@@ -463,7 +463,7 @@ class DP {
 	clear_maze() {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
-				this.fill_digit(i, j, 'white');
+				this.fill_digit(i, j, this.config.clear_color);
 			}
 		}
 	}
