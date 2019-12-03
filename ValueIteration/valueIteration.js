@@ -586,28 +586,19 @@ class DP {
 	}
 }
 
-function request_json_maze(canvas, rows=15, cols=15) {
-	let request = new XMLHttpRequest();
-	let url = "http://www.lespursetdurs.fr/maze/?rows=" + rows + "&cols=" + cols +"&json";
-	let that = this;
-	
-	request.open("GET", url, true);
-	request.responseType = "text";
-	request.onload = function(e) {
-		let matrix = JSON.parse(request.response);
-		console.log(matrix);
-
-		return new DP(canvas, matrix);
-	}
-	request.send();	
-}
-
 var canvas = document.getElementById('main_canvas');
 var canvas2 = document.getElementById('second_canvas');
 
 var iter = new DP(canvas, matrix_test);
 
-var iter2 = new DP(canvas2, JSON.parse(bug));
-iter2.reward_matrix = DP.create_matrix(iter2.rows, iter2.cols, (i, j) => -1);
-iter2.place_goal(3, 28);
-iter2.draw_reward_matrix();
+var new_maze_button = document.getElementById("new_maze_button");
+var rows_input = document.getElementById("rows_input");
+var cols_input = document.getElementById("cols_input");
+
+new_maze_button.addEventListener("click", function(e) {
+	e.preventDefault();
+	let r = parseInt(rows_input.value);
+	let c = parseInt(cols_input.value);
+	console.log("r: " + r + ", c: " + c);
+	iter.request_json_maze(canvas, r, c);
+});

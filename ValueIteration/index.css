@@ -1,6 +1,9 @@
 body {
 	text-align: center;
 }
+main {
+	display: flex;
+}
 canvas {
 	/*border: solid 1px;*/
 	border-color: 'black';

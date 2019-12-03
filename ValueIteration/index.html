@@ -11,6 +11,24 @@
 		<h1>Some maze to solve</h1>
 		<canvas id="main_canvas" width="640px" height="480px"></canvas>
 	  </section>
+	  <section>
+		<form>
+		  <div>
+			<label for="rows_input"></label>
+			<input type="number" id="rows_input">
+		  </div>
+		  <div>
+			<label for="cols_input"></label>
+			<input type="number" id="cols_input">
+		  </div>
+		  <div>
+			<label for="maze_animation_input">animation</label>
+			<input type="checkbox" id="maze_animation_input">
+		  </div>
+		  <button type="submit" id="new_maze_button">New maze</button>
+		</form>
+		<button type="button">Reset</button>
+	  </section>
 	</main>
 	<script src="valueIteration.js"></script>
   </body>
