@@ -515,7 +515,6 @@ class DP {
 			that.action_three(y, x);
 			console.log(that.possible_actions(y, x));
 			console.log(that.maximum_neighbor(that.value_matrix, y, x));
-			//that.ctx.strokeRect((x+1.25)*that.col_step, (y+1.25)*that.row_step, 10, 10);
 		});
 	}
 	request_json_maze(rows=15, cols=15) {
