@@ -139,8 +139,12 @@ class DP {
 		//section.appendChild(this.buffer);
 		
 		//this.fill_and_iterate();
-		this.clear_maze();
-
+		if(new_maze_animation.checked) {
+			this.remove_grid_and_iterate(0);
+		}
+		else {
+			this.clear_maze();
+		}
 		
 		//this.place_goal_randomly(0);
 		this.place_goal(this.rows / 2, this.cols / 2);
@@ -517,11 +521,11 @@ class DP {
 			console.log(that.maximum_neighbor(that.value_matrix, y, x));
 		});
 	}
-	request_json_maze(rows=15, cols=15) {
+	request_json_maze(rows=15, cols=20) {
 		let request = new XMLHttpRequest();
 		let url = "http://www.lespursetdurs.fr/maze/?rows=" + rows + "&cols=" + cols +"&json";
 		let that = this;
-		
+
 		request.open("GET", url, true);
 		request.responseType = "text";
 		request.onload = function(e) {
@@ -587,18 +591,20 @@ class DP {
 }
 
 var canvas = document.getElementById('main_canvas');
-var canvas2 = document.getElementById('second_canvas');
 
 var iter = new DP(canvas, matrix_test);
 
-var new_maze_button = document.getElementById("new_maze_button");
-var rows_input = document.getElementById("rows_input");
-var cols_input = document.getElementById("cols_input");
+var controller = {
+	"new_maze_button": document.getElementById("new_maze_button"),
+	"rows_input": document.getElementById("rows_input"),
+	"cols_input": document.getElementById("cols_input"),
+	"new_maze_animation": document.getElementById("new_maze_animation"),
+}
 
-new_maze_button.addEventListener("click", function(e) {
+controller.new_maze_button.addEventListener("click", function(e) {
 	e.preventDefault();
-	let r = parseInt(rows_input.value);
-	let c = parseInt(cols_input.value);
+	let r = parseInt(controller.rows_input.value);
+	let c = parseInt(controller.cols_input.value);
 	console.log("r: " + r + ", c: " + c);
-	iter.request_json_maze(canvas, r, c);
+	iter.request_json_maze(r, c);
 });
