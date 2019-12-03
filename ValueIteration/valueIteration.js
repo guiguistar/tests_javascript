@@ -105,6 +105,10 @@ var codes = [  0x20,
 class DP {
 	constructor(canvas, matrix) {
 		this.canvas = canvas; // once
+		this.buffer = document.createElement('canvas');
+		let section = document.getElementById('first_section');
+		section.appendChild(this.buffer);
+
 		this.draw_value_matrix_on = true;
 		this.init_matrix(matrix);
 		this.attach_listeners();
@@ -131,7 +135,6 @@ class DP {
 		this.value_matrix     = DP.create_matrix(this.rows, this.cols, (i, j) => 0);
 		this.new_value_matrix = DP.create_matrix(this.rows, this.cols, (i, j) => 0);
 
-		this.buffer = document.createElement('canvas');
 		this.buffer.width = this.canvas.width;
 		this.buffer.height = this.canvas.height;
 		this.bufferCtx = this.buffer.getContext('2d');
@@ -311,7 +314,6 @@ class DP {
 	}
 	fill_digit(ctx, i, j, color) {
 		let digit = this.matrix[i][j];
-		console.log(ctx);
 		
  		if(digit & direction_bit.UP) {
 			this.fill_top(ctx, i, j, color);
@@ -442,14 +444,23 @@ class DP {
 		let j = counter % this.cols;
 		let i = (counter - j) / this.cols;
 
-		this.fill_digit(this.ctx, i, j, this.config.clear_color);
-
+		for(let k = 0; k < this.cols; k++) {
+			this.fill_digit(this.ctx, i, k, this.config.clear_color);
+		}
+		
 		if(counter < this.rows * this.cols) {
-			requestAnimationFrame(() => this.remove_grid_and_iterate(counter + 1));
+			requestAnimationFrame(() => this.remove_grid_and_iterate(counter + this.cols));
 		}
 	}
 	place_goal(i, j) {
-		this.reward_matrix[i][j] = 0;
+		if(i >= 0 && i < this.rows && j >= 0 && j <= this.cols) {
+			console.log(i, j);
+			console.log(this.reward_matrix);
+			this.reward_matrix[i][j] = 0;
+		}
+		else {
+			console.log("Error during goal placement.");
+		}
 	}
 	place_goal_randomly(value = 0) {
 		this.i_goal = Math.floor(Math.random() * this.rows);

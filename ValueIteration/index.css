@@ -5,6 +5,6 @@ main {
 	display: flex;
 }
 canvas {
-	/*border: solid 1px;*/
+	border: solid 1px;
 	border-color: 'black';
 }
