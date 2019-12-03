@@ -284,16 +284,16 @@ class DP {
 			}
 		}
 	}
-	fill_top(i, j, color)    { this.clear_line_with_rect(i, j, 0, -1, color); }
-	fill_bottom(i, j, color) { this.clear_line_with_rect(i, j, 1, -1, color); }
-	fill_left(i, j, color)   { this.clear_line_with_rect(i, j, 0,  0, color); }
-	fill_right(i, j, color)  { this.clear_line_with_rect(i, j, 0,  1, color); }
+	fill_top(ctx, i, j, color)    { this.clear_line_with_rect(ctx, i, j, 0, -1, color); }
+	fill_bottom(ctx, i, j, color) { this.clear_line_with_rect(ctx, i, j, 1, -1, color); }
+	fill_left(ctx, i, j, color)   { this.clear_line_with_rect(ctx, i, j, 0,  0, color); }
+	fill_right(ctx, i, j, color)  { this.clear_line_with_rect(ctx, i, j, 0,  1, color); }
 	
-	clear_line_with_rect(i, j, bottom, right, color) {
-		let style = this.ctx.fillStyle;
-		this.ctx.fillStyle = color
+	clear_line_with_rect(ctx, i, j, bottom, right, color) {
+		let style = ctx.fillStyle;
+		ctx.fillStyle = color
 
-		let w = this.ctx.lineWidth;
+		let w = ctx.lineWidth;
 		let h = w;
 
 		let vertical = right != -1 ? 1 : 0;
@@ -302,27 +302,28 @@ class DP {
 		 * the fillRect cover the rect + the strokeline according to the bottom
 		 * and right variables.
 		 */
-		this.ctx.fillRect((j+1+vertical*right) * this.row_step + w/2 - vertical * w,
-					  (i+1+bottom) * this.col_step + h/2 - (1-vertical) * h,
-					  w + (1-vertical) * (this.col_step - 2 * w),
-					  h + vertical * (this.row_step -2 * h));
+		ctx.fillRect((j+1+vertical*right) * this.row_step + w/2 - vertical * w,
+					 (i+1+bottom) * this.col_step + h/2 - (1-vertical) * h,
+					 w + (1-vertical) * (this.col_step - 2 * w),
+					 h + vertical * (this.row_step -2 * h));
 		
-		this.ctx.fillStyle = style;
+		ctx.fillStyle = style;
 	}
-	fill_digit(i, j, color) {
+	fill_digit(ctx, i, j, color) {
 		let digit = this.matrix[i][j];
-
+		console.log(ctx);
+		
  		if(digit & direction_bit.UP) {
-			this.fill_top(i, j, color);
+			this.fill_top(ctx, i, j, color);
 		}
  		if(digit & direction_bit.RIGHT) {
-			this.fill_right(i, j, color);
+			this.fill_right(ctx, i, j, color);
 		}
  		if(digit & direction_bit.DOWN) {
-			this.fill_bottom(i, j, color);
+			this.fill_bottom(ctx, i, j, color);
 		}
  		if(digit & direction_bit.LEFT) {
-			this.fill_left(i, j, color);
+			this.fill_left(ctx, i, j, color);
 		}
 	}
 	fill_value_matrix() {
@@ -331,7 +332,7 @@ class DP {
 			for(let j = 0; j < this.cols; j++) {
 				let color = DP.compute_color_from_value(this.value_matrix[i][j]);
 				this.draw_cell(i, j, color);
-				this.fill_digit(i, j, color);
+				this.fill_digit(this.ctx, i, j, color);
 			}
 		}
 	}
@@ -441,7 +442,7 @@ class DP {
 		let j = counter % this.cols;
 		let i = (counter - j) / this.cols;
 
-		this.fill_digit(i, j, this.config.clear_color);
+		this.fill_digit(this.ctx, i, j, this.config.clear_color);
 
 		if(counter < this.rows * this.cols) {
 			requestAnimationFrame(() => this.remove_grid_and_iterate(counter + 1));
@@ -467,7 +468,7 @@ class DP {
 	clear_maze() {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
-				this.fill_digit(i, j, this.config.clear_color);
+				this.fill_digit(this.ctx, i, j, this.config.clear_color);
 			}
 		}
 	}
