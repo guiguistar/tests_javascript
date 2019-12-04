@@ -127,7 +127,7 @@ class DP {
 
 		this.init_sizes();
 
-		this.draw_grid();
+		this.draw_grid(this.ctx);
 		this.log();
 
 		this.matrix           = matrix;
@@ -146,7 +146,7 @@ class DP {
 			this.remove_grid_and_iterate(0);
 		}
 		else {
-			this.clear_maze();
+			this.clear_grid(this.ctx);
 		}
 		
 		//this.place_goal_randomly(0);
@@ -244,12 +244,12 @@ class DP {
 		return [res_i, res_j];
 	}
 	
-	draw_grid() {
+	draw_grid(context) {
 		// Horizontal lines
 		for(let i = 1; i < this.rows+2; i++) {
-			this.ctx.moveTo(this.row_step, i*this.row_step);
-			this.ctx.lineTo(this.canvas.width-this.row_step, i*this.row_step);
-			this.ctx.stroke();
+			context.moveTo(this.row_step, i*this.row_step);
+			context.lineTo(this.canvas.width-this.row_step, i*this.row_step);
+			context.stroke();
 		}
 		// Vertical lines
 		for(let j = 1; j < this.cols+2; j++) {
@@ -476,10 +476,10 @@ class DP {
 		this.clear_canvas();
 		this.ctx.drawImage(this.buffer, 0, 0);
 	}
-	clear_maze() {
+	clear_grid(context) {
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
-				this.fill_digit(this.ctx, i, j, this.config.clear_color);
+				this.fill_digit(context, i, j, this.config.clear_color);
 			}
 		}
 	}
