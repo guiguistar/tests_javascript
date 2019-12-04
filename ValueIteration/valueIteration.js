@@ -127,9 +127,6 @@ class DP {
 
 		this.init_sizes();
 
-		this.draw_grid(this.ctx);
-		this.log();
-
 		this.matrix           = matrix;
 		this.reward_matrix    = DP.create_matrix(this.rows, this.cols, (i, j) => -1);
 		this.value_matrix     = DP.create_matrix(this.rows, this.cols, (i, j) => 0);
@@ -138,6 +135,18 @@ class DP {
 		this.buffer.width = this.canvas.width;
 		this.buffer.height = this.canvas.height;
 		this.bufferCtx = this.buffer.getContext('2d');
+
+		this.ctx.lineCap = 'round';
+		//this.bufferCtx.lineCap = 'square';
+		
+		this.draw_grid(this.canvas);
+		this.draw_grid(this.buffer);
+		//this.clear_grid(this.bufferCtx);
+
+		//this.bufferCtx.drawImage(this.canvas, 0,0);
+		
+		this.log();
+
 		//let section = document.getElementById('first_section');
 		//section.appendChild(this.buffer);
 		
@@ -146,13 +155,11 @@ class DP {
 			this.remove_grid_and_iterate(0);
 		}
 		else {
-			this.clear_grid(this.ctx);
+			//this.clear_grid(this.ctx);
 		}
 		
 		//this.place_goal_randomly(0);
 		this.place_goal(this.rows / 2, this.cols / 2);
-		
-		this.bufferCtx.drawImage(this.canvas, 0, 0);
 	}
 	init_sizes(coeff=0.8) {
 		let row_step = Math.floor(coeff * window.innerHeight / this.rows);
@@ -164,7 +171,6 @@ class DP {
 		this.canvas.width = (this.cols + 2) * this.size;
 		this.canvas.height = (this.rows + 2) * this.size;
 		this.ctx.lineWidth = this.config.wallWidth;
-		this.ctx.lineCap = 'round';
 		this.ctx.font = '' + (this.size - 2 * this.ctx.lineWidth) / 3 + 'px monospace';
 		
 		this.row_step = this.size;
@@ -244,18 +250,19 @@ class DP {
 		return [res_i, res_j];
 	}
 	
-	draw_grid(context) {
+	draw_grid(canvas) {
+		let context = canvas.getContext('2d');
 		// Horizontal lines
 		for(let i = 1; i < this.rows+2; i++) {
-			context.moveTo(this.row_step, i*this.row_step);
-			context.lineTo(this.canvas.width-this.row_step, i*this.row_step);
+			context.moveTo(this.col_step, i*this.row_step);
+			context.lineTo(canvas.width-this.col_step, i*this.row_step);
 			context.stroke();
 		}
 		// Vertical lines
 		for(let j = 1; j < this.cols+2; j++) {
-			this.ctx.moveTo(j*this.col_step, this.col_step);
-			this.ctx.lineTo(j*this.col_step, this.canvas.height-this.col_step);
-			this.ctx.stroke();
+			context.moveTo(j*this.col_step, this.row_step);
+			context.lineTo(j*this.col_step, canvas.height-this.row_step);
+			context.stroke();
 		}
 	}
 	draw_goal() {
@@ -469,14 +476,15 @@ class DP {
 		console.log("goal: ", this.i_goal, this.j_goal);
 		this.reward_matrix[this.i_goal][this.j_goal] = value;
 	}
-	clear_canvas() {
-		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-	}
 	clear_and_draw_buffer() {
-		this.clear_canvas();
+		DP.clear_canvas(this.canvas);
 		this.ctx.drawImage(this.buffer, 0, 0);
 	}
 	clear_grid(context) {
+		console.log(context.fillStyle);
+		console.log(context.strokeStyle);
+		console.log(this.config.clear_color);
+		
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
 				this.fill_digit(context, i, j, this.config.clear_color);
@@ -555,6 +563,10 @@ class DP {
 		for(let i = 0; i < n; i++) {
 			dst[i] = src[i].slice();
 		}
+	}
+	static clear_canvas(canvas) {
+		let ctx = canvas.getContext('2d');
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
 	}
 	static create_matrix(n, p, f) {
 		let matrix = []
