@@ -365,7 +365,7 @@ class DP {
 		}
 	}
 	iterations(n, gamma=1) {
-		for(let i = 0; i <= n; i++) {
+		for(let i = 1; i <= n; i++) {
 			this.copy_matrix(this.new_value_matrix, this.value_matrix);
 			this.iteration(gamma);
 		}
@@ -649,9 +649,9 @@ var controller = {
 	"new_maze_animation": document.getElementById("new_maze_animation"),
 	"matrices_options_group": document.getElementById("matrices_options_group"),
 	"iteration_number_input": document.getElementById("iteration_number_input"),
+	"converge_button": document.getElementById("converge_button"),
 	"iteration_button": document.getElementById("iteration_button"),
 }
-
 controller.new_maze_button.addEventListener("click", function(e) {
 	e.preventDefault();
 	let r = parseInt(controller.rows_input.value);
@@ -666,12 +666,16 @@ controller.matrices_options_group.addEventListener("change", function(e) {
 		console.log(radio.id);
 		if(radio.checked) {
 			if(radio.id == "value_option") {
-				DP.clear_canvas(iter.canvas);
+				//DP.clear_canvas(iter.canvas);
+				iter.clear_and_draw_buffer();
 				iter.fill_value_matrix();
+				iter.draw_value_matrix();
 			}
 			if(radio.id == "reward_option") {
-				DP.clear_canvas(iter.canvas);
+				//DP.clear_canvas(iter.canvas);
+				iter.clear_and_draw_buffer();
 				iter.fill_reward_matrix();
+				iter.draw_reward_matrix();
 			}
 			if(radio.id == "none_option") {
 				console.log("Clear!");
@@ -680,9 +684,14 @@ controller.matrices_options_group.addEventListener("change", function(e) {
 		}
 	}
 });
+controller.converge_button.addEventListener("click", function(e) {
+	e.preventDefault();
+	iter.fill_until_converge();
+});
 controller.iteration_button.addEventListener("click", function(e) {
 	e.preventDefault();
 	let i = parseInt(controller.iteration_number_input.value);
 	iter.iterations(i);
 	iter.fill_value_matrix();
+	iter.draw_value_matrix();
 });
