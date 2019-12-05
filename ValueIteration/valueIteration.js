@@ -106,17 +106,16 @@ class DP {
 	constructor(canvas, matrix) {
 		this.canvas = canvas; // once
 		this.buffer = document.createElement('canvas');
-		let section = document.getElementById('first_section');
-		section.appendChild(this.buffer);
-
+		//this.canvas.parentNode.insertBefore(this.buffer, this.canvas.nextSibling);
+		
 		this.draw_value_matrix_on = true;
-		this.init_matrix(matrix);
+		this.init_from_matrix(matrix);
 		this.attach_listeners();
 	}
-	init_matrix(matrix) {
+	init_from_matrix(matrix) {
 		this.config = {
-			wallWidth: 4,
-			pathWidth: 12,
+			wallWidth: 2,
+			pathWidth: 8, // modified by init_sizes
 			goal_color: 'orange',
 			clear_color: 'white',
 		}
@@ -125,59 +124,49 @@ class DP {
 		this.rows = matrix.length;
 		this.cols = matrix[0].length;
 
-		this.init_sizes();
+		this.init_sizes(this.canvas);
+		this.init_sizes(this.buffer);
 
 		this.matrix           = matrix;
 		this.reward_matrix    = DP.create_matrix(this.rows, this.cols, (i, j) => -1);
 		this.value_matrix     = DP.create_matrix(this.rows, this.cols, (i, j) => 0);
 		this.new_value_matrix = DP.create_matrix(this.rows, this.cols, (i, j) => 0);
-
-		this.buffer.width = this.canvas.width;
-		this.buffer.height = this.canvas.height;
-		this.bufferCtx = this.buffer.getContext('2d');
-		this.bufferCtx.lineWidth = this.config.wallWidth;
-		this.bufferCtx.lineCap = 'round';
-		
-		this.ctx.lineCap = 'round';
-		//this.bufferCtx.lineCap = 'square';
 		
 		this.draw_grid(this.canvas);
 		this.draw_grid(this.buffer);
-		this.clear_grid(this.bufferCtx);
 
-		//this.bufferCtx.drawImage(this.canvas, 0,0);
+		//this.clear_grid(this.canvas);
+		this.clear_grid(this.buffer);
 		
 		this.log();
 
-		//let section = document.getElementById('first_section');
-		//section.appendChild(this.buffer);
-		
-		//this.fill_and_iterate();
 		if(new_maze_animation.checked) {
 			this.remove_grid_and_iterate(0);
 		}
 		else {
-			//this.clear_grid(this.ctx);
+			this.clear_grid(this.canvas);
 		}
 		
 		//this.place_goal_randomly(0);
-		this.place_goal(this.rows / 2, this.cols / 2);
+		this.place_goal(Math.floor(this.rows / 2), Math.floor(this.cols / 2));
 	}
-	init_sizes(coeff=0.8) {
+	init_sizes(canvas, coeff=0.8) {
 		let row_step = Math.floor(coeff * window.innerHeight / this.rows);
 		let row_cols = Math.floor(window.innerWidth  / this.cols);
-
-		this.size = Math.min(row_step, row_cols);		
-		this.ctx = this.canvas.getContext('2d');
-
-		this.canvas.width = (this.cols + 2) * this.size;
-		this.canvas.height = (this.rows + 2) * this.size;
-		this.ctx.lineWidth = this.config.wallWidth;
-		this.ctx.font = '' + (this.size - 2 * this.ctx.lineWidth) / 3 + 'px monospace';
+		let context = canvas.getContext('2d');
 		
+		this.size = Math.min(row_step, row_cols);		
+
+		canvas.width = (this.cols + 2) * this.size;
+		canvas.height = (this.rows + 2) * this.size;
+		context.lineWidth = this.config.wallWidth;
+		context.font = '' + (this.size - 2 * context.lineWidth) / 3 + 'px monospace';	
+		context.lineCap = 'round';
+			
 		this.row_step = this.size;
 		this.col_step = this.size;
-
+		
+		this.config.pathWidth = Math.floor(this.size / 2);
 	}
 	toggle_draw_value_matrix_on() {
 		this.draw_value_matrix_on = !this.draw_value_matrix_on;
@@ -187,11 +176,8 @@ class DP {
 			this.draw_value_matrix();
 		}
 	}
-	fill_after_iterations(n) {
-		for(let i = 0; i <= n; i++) {
-			this.copy_matrix(this.new_value_matrix, this.value_matrix);
-			this.iteration();
-		}
+	fill_after_iterations(n, gamma=1) {
+		this.iterations(n, gamma);
 		this.clear_and_draw_buffer();
 		this.fill_value_matrix();
 		this.draw_value_matrix();
@@ -271,13 +257,15 @@ class DP {
 		this.draw_cell(this.i_goal, this.j_goal, this.config.goal_color);
 	}
 	draw_cell(i, j, color) {
-		let style = this.ctx.fillStyle;
-		this.ctx.fillStyle = color;
-		this.ctx.fillRect((j+1) * this.col_step + this.ctx.lineWidth / 2,
-						  (i+1) * this.row_step + this.ctx.lineWidth / 2,
-						  this.col_step - this.ctx.lineWidth,
-						  this.row_step - this.ctx.lineWidth);
-		this.ctx.fillStyle = style;
+		let context = this.canvas.getContext('2d');
+		let style = context.fillStyle;
+		
+		context.fillStyle = color;
+		context.fillRect((j+1) * this.col_step + context.lineWidth / 2,
+						  (i+1) * this.row_step + context.lineWidth / 2,
+						  this.col_step - context.lineWidth,
+						  this.row_step - context.lineWidth);
+		context.fillStyle = style;
 	}
 	draw_value_matrix() {
 		this.draw_matrix(this.value_matrix);
@@ -289,23 +277,26 @@ class DP {
 	draw_matrix(matrix, di=1.7, dj=1.15) {
 		let n = matrix.length;
 		let p = matrix[0].length;
+		let context = this.canvas.getContext('2d');
+		
 		for(let i = 0; i < n; i++) {
 			for(let j = 0; j < p; j++) {
 				let value = matrix[i][j];
-				this.ctx.fillText(value, (j+dj) * this.col_step, (i+di) * this.row_step);
+				context.fillText(value, (j+dj) * this.col_step, (i+di) * this.row_step);
 			}
 		}
 	}
-	fill_top(ctx, i, j, color)    { this.clear_line_with_rect(ctx, i, j, 0, -1, color); }
-	fill_bottom(ctx, i, j, color) { this.clear_line_with_rect(ctx, i, j, 1, -1, color); }
-	fill_left(ctx, i, j, color)   { this.clear_line_with_rect(ctx, i, j, 0,  0, color); }
-	fill_right(ctx, i, j, color)  { this.clear_line_with_rect(ctx, i, j, 0,  1, color); }
+	fill_top(canvas, i, j, color)    { this.clear_line_with_rect(canvas, i, j, 0, -1, color); }
+	fill_bottom(canvas, i, j, color) { this.clear_line_with_rect(canvas, i, j, 1, -1, color); }
+	fill_left(canvas, i, j, color)   { this.clear_line_with_rect(canvas, i, j, 0,  0, color); }
+	fill_right(canvas, i, j, color)  { this.clear_line_with_rect(canvas, i, j, 0,  1, color); }
 	
-	clear_line_with_rect(ctx, i, j, bottom, right, color) {
-		let style = ctx.fillStyle;
-		ctx.fillStyle = color
+	clear_line_with_rect(canvas, i, j, bottom, right, color) {
+		let context = canvas.getContext('2d');
+		let style = context.fillStyle;
+		context.fillStyle = color
 
-		let w = ctx.lineWidth;
+		let w = context.lineWidth;
 		let h = w;
 
 		let vertical = right != -1 ? 1 : 0;
@@ -314,36 +305,51 @@ class DP {
 		 * the fillRect cover the rect + the strokeline according to the bottom
 		 * and right variables.
 		 */
-		ctx.fillRect((j+1+vertical*right) * this.row_step + w/2 - vertical * w,
-					 (i+1+bottom) * this.col_step + h/2 - (1-vertical) * h,
-					 w + (1-vertical) * (this.col_step - 2 * w),
-					 h + vertical * (this.row_step -2 * h));
+		context.fillRect((j+1+vertical*right) * this.row_step + w/2 - vertical * w,
+						 (i+1+bottom) * this.col_step + h/2 - (1-vertical) * h,
+						 w + (1-vertical) * (this.col_step - 2 * w),
+						 h + vertical * (this.row_step -2 * h));
 		
-		ctx.fillStyle = style;
+		context.fillStyle = style;
 	}
-	fill_digit(ctx, i, j, color) {
+	fill_digit(canvas, i, j, color) {
+		//console.log(i, j);
+		//console.log(this.matrix[i][j]);
 		let digit = this.matrix[i][j];
 		
  		if(digit & direction_bit.UP) {
-			this.fill_top(ctx, i, j, color);
+			this.fill_top(canvas, i, j, color);
 		}
  		if(digit & direction_bit.RIGHT) {
-			this.fill_right(ctx, i, j, color);
+			this.fill_right(canvas, i, j, color);
 		}
  		if(digit & direction_bit.DOWN) {
-			this.fill_bottom(ctx, i, j, color);
+			this.fill_bottom(canvas, i, j, color);
 		}
  		if(digit & direction_bit.LEFT) {
-			this.fill_left(ctx, i, j, color);
+			this.fill_left(canvas, i, j, color);
 		}
 	}
 	fill_value_matrix() {
-		this.ctx.lineWidth = this.config.wallWidth;
+		let context = this.canvas.getContext('2d');
+		context.lineWidth = this.config.wallWidth;
+
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
 				let color = DP.compute_color_from_value(this.value_matrix[i][j]);
 				this.draw_cell(i, j, color);
-				this.fill_digit(this.ctx, i, j, color);
+				this.fill_digit(this.canvas, i, j, color);
+			}
+		}
+	}
+	fill_reward_matrix() {
+		let context = this.canvas.getContext('2d');
+
+		for(let i = 0; i < this.rows; i++) {
+			for(let j = 0; j < this.cols; j++) {
+				let color = DP.compute_color_from_value(50 * this.reward_matrix[i][j]);
+				this.draw_cell(i, j, color);
+				this.fill_digit(this.canvas, i, j, color);
 			}
 		}
 	}
@@ -356,6 +362,12 @@ class DP {
 			for(let j = 0; j < this.cols; j++) {
 				this.new_value_matrix[i][j] = this.maximum_value(i, j, gamma);
 			}
+		}
+	}
+	iterations(n, gamma=1) {
+		for(let i = 0; i <= n; i++) {
+			this.copy_matrix(this.new_value_matrix, this.value_matrix);
+			this.iteration(gamma);
 		}
 	}
 	converge() {
@@ -399,8 +411,10 @@ class DP {
 		let current_i = i;
 		let current_j = j;
 
-		let sStyle = this.ctx.strokeStyle;
-		this.ctx.lineWidth = this.config.pathWidth;
+		let context = this.canvas.getContext('2d');
+		let sStyle = context.strokeStyle;
+
+		context.lineWidth = this.config.pathWidth;
 
 		function helper() {
 			//console.log('(i,j)=' + '(' + i + ',' + j + ')');
@@ -410,22 +424,24 @@ class DP {
 			let [new_i, new_j] = that.maximum_neighbor(that.value_matrix, current_i, current_j);
 			let new_x = (new_j + 1.5) * that.col_step;
 			let new_y = (new_i + 1.5) * that.row_step;
+
+			let context = that.canvas.getContext('2d');
 			
-			that.ctx.strokeStyle = DP.compute_color_from_value(that.value_matrix[new_i][new_j] + 180);
-			//that.ctx.fillRect(j, i, 5, 5);
-			that.ctx.beginPath();
-			that.ctx.moveTo(current_x, current_y);
-			that.ctx.lineTo(new_x, new_y);
-			that.ctx.stroke();
-			//that.ctx.fillText(that.value_matrix[current_i][current_j], (current_j+1.5)*that.col_step, (current_i+0.5)*that.row_step, 10, 10);
+			context.strokeStyle = DP.compute_color_from_value(that.value_matrix[new_i][new_j] + 180);
+			//context.fillRect(j, i, 5, 5);
+			context.beginPath();
+			context.moveTo(current_x, current_y);
+			context.lineTo(new_x, new_y);
+			context.stroke();
+			//context.fillText(that.value_matrix[current_i][current_j], (current_j+1.5)*that.col_step, (current_i+0.5)*that.row_step, 10, 10);
 			if( current_i != that.i_goal || current_j != that.j_goal) {
 				current_i = new_i;
 				current_j = new_j;
 				requestAnimationFrame(helper);
 			}
 			else {
-				//at.ctx.lineWidth = that.config.wallWidth;
-				//that.ctx.strokeStyle = sStyle;
+				//context.lineWidth = that.config.wallWidth;
+				//context.strokeStyle = sStyle;
 			}
 		}
 		requestAnimationFrame(helper);
@@ -453,11 +469,13 @@ class DP {
 		let j = counter % this.cols;
 		let i = (counter - j) / this.cols;
 
+		//console.log(this.rows, this.cols, i, j, counter);
+
 		for(let k = 0; k < this.cols; k++) {
-			this.fill_digit(this.ctx, i, k, this.config.clear_color);
+			this.fill_digit(this.canvas, i, k, this.config.clear_color);
 		}
 		
-		if(counter < this.rows * this.cols) {
+		if(counter < (this.rows-1) * this.cols) {
 			requestAnimationFrame(() => this.remove_grid_and_iterate(counter + this.cols));
 		}
 	}
@@ -480,16 +498,18 @@ class DP {
 	}
 	clear_and_draw_buffer() {
 		DP.clear_canvas(this.canvas);
-		this.ctx.drawImage(this.buffer, 0, 0);
+		this.canvas.getContext('2d').drawImage(this.buffer, 0, 0);
 	}
-	clear_grid(context) {
+	clear_grid(canvas) {
+		let context = canvas.getContext('2d');
+		
 		console.log(context.fillStyle);
 		console.log(context.strokeStyle);
 		console.log(this.config.clear_color);
 		
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
-				this.fill_digit(context, i, j, this.config.clear_color);
+				this.fill_digit(canvas, i, j, this.config.clear_color);
 			}
 		}
 	}
@@ -552,7 +572,7 @@ class DP {
 		request.responseType = "text";
 		request.onload = function(e) {
 			let matrix = JSON.parse(request.response);
-			that.init_matrix(matrix);
+			that.init_from_matrix(matrix);
 			console.log(that.matrix);
 		}
 		request.send();	
@@ -619,14 +639,17 @@ class DP {
 var canvas = document.getElementById('main_canvas');
 var iter = new DP(canvas, matrix_test);
 
-var test_canvas = document.getElementById('test_canvas');
-var iter2 = new DP(test_canvas, matrix_test);
+//var test_canvas = document.getElementById('test_canvas');
+//var iter2 = new DP(test_canvas, matrix_test);
 
 var controller = {
 	"new_maze_button": document.getElementById("new_maze_button"),
 	"rows_input": document.getElementById("rows_input"),
 	"cols_input": document.getElementById("cols_input"),
 	"new_maze_animation": document.getElementById("new_maze_animation"),
+	"matrices_options_group": document.getElementById("matrices_options_group"),
+	"iteration_number_input": document.getElementById("iteration_number_input"),
+	"iteration_button": document.getElementById("iteration_button"),
 }
 
 controller.new_maze_button.addEventListener("click", function(e) {
@@ -635,4 +658,31 @@ controller.new_maze_button.addEventListener("click", function(e) {
 	let c = parseInt(controller.cols_input.value);
 	console.log("r: " + r + ", c: " + c);
 	iter.request_json_maze(r, c);
+});
+controller.matrices_options_group.addEventListener("change", function(e) {
+	e.preventDefault();
+	let radios= document.getElementsByName("matrices_options");
+	for(const radio of radios) {
+		console.log(radio.id);
+		if(radio.checked) {
+			if(radio.id == "value_option") {
+				DP.clear_canvas(iter.canvas);
+				iter.fill_value_matrix();
+			}
+			if(radio.id == "reward_option") {
+				DP.clear_canvas(iter.canvas);
+				iter.fill_reward_matrix();
+			}
+			if(radio.id == "none_option") {
+				console.log("Clear!");
+				iter.clear_and_draw_buffer();
+			}
+		}
+	}
+});
+controller.iteration_button.addEventListener("click", function(e) {
+	e.preventDefault();
+	let i = parseInt(controller.iteration_number_input.value);
+	iter.iterations(i);
+	iter.fill_value_matrix();
 });
