@@ -115,8 +115,8 @@ class DP {
 	}
 	init_matrix(matrix) {
 		this.config = {
-			wallWidth: 2,
-			pathWidth: 6,
+			wallWidth: 4,
+			pathWidth: 12,
 			goal_color: 'orange',
 			clear_color: 'white',
 		}
@@ -135,13 +135,15 @@ class DP {
 		this.buffer.width = this.canvas.width;
 		this.buffer.height = this.canvas.height;
 		this.bufferCtx = this.buffer.getContext('2d');
-
+		this.bufferCtx.lineWidth = this.config.wallWidth;
+		this.bufferCtx.lineCap = 'round';
+		
 		this.ctx.lineCap = 'round';
 		//this.bufferCtx.lineCap = 'square';
 		
 		this.draw_grid(this.canvas);
 		this.draw_grid(this.buffer);
-		//this.clear_grid(this.bufferCtx);
+		this.clear_grid(this.bufferCtx);
 
 		//this.bufferCtx.drawImage(this.canvas, 0,0);
 		
@@ -615,8 +617,10 @@ class DP {
 }
 
 var canvas = document.getElementById('main_canvas');
-
 var iter = new DP(canvas, matrix_test);
+
+var test_canvas = document.getElementById('test_canvas');
+var iter2 = new DP(test_canvas, matrix_test);
 
 var controller = {
 	"new_maze_button": document.getElementById("new_maze_button"),
