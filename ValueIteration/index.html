@@ -36,17 +36,22 @@
 		<h2>Matrices</h2>
 		<form id="matrices_options_group">
 		  <div class="btn-group btn-group-toggle" data-toggle="buttons">
-			<label class="btn btn-secondary active">
-			<input type="radio" name="matrices_options" id="value_option" checked > Value
+			<label class="btn btn-primary">
+			  <input type="radio" name="matrices_options" id="value_option" checked > Value
 			</label>
-			<label class="btn btn-secondary">
+			<label class="btn btn-primary">
 			  <input type="radio" name="matrices_options" id="reward_option" > Reward
 			</label>
-			<label class="btn btn-secondary">
+			<label class="btn btn-primary active">
 			  <input type="radio" name="matrices_options" id="none_option" > None
 			</label>
 		  </div>
 		</form>
+		<div>
+		  <label for="draw_checked_input">values</label>
+		  <input type="checkbox" id="draw_checked_input">
+		</div>
+		<h2>Value iteration</h2>
 		<form>
 		  <div>
 			<label for="iteration_number_input">Iterations</label>

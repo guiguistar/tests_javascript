@@ -108,7 +108,7 @@ class DP {
 		this.buffer = document.createElement('canvas');
 		//this.canvas.parentNode.insertBefore(this.buffer, this.canvas.nextSibling);
 		
-		this.draw_value_matrix_on = true;
+		this.draw_value_matrix_on = false;
 		this.init_from_matrix(matrix);
 		this.attach_listeners();
 	}
@@ -150,7 +150,7 @@ class DP {
 		//this.place_goal_randomly(0);
 		this.place_goal(Math.floor(this.rows / 2), Math.floor(this.cols / 2));
 	}
-	init_sizes(canvas, coeff=0.8) {
+	init_sizes(canvas, coeff=0.5) {
 		let row_step = Math.floor(coeff * window.innerHeight / this.rows);
 		let row_cols = Math.floor(window.innerWidth  / this.cols);
 		let context = canvas.getContext('2d');
@@ -493,7 +493,7 @@ class DP {
 		this.i_goal = Math.floor(Math.random() * this.rows);
 		this.j_goal = Math.floor(Math.random() * this.cols);
 
-		console.log("goal: ", this.i_goal, this.j_goal);
+		console.log("Random goal: ", this.i_goal, this.j_goal);
 		this.reward_matrix[this.i_goal][this.j_goal] = value;
 	}
 	clear_and_draw_buffer() {
@@ -558,7 +558,12 @@ class DP {
 
 			//that.action_one(y, x);
 			that.action_two(y, x);
-			that.action_three(y, x);
+			//that.action_three(y, x);
+			DP.reset_matrix(that.reward_matrix, -1);
+			that.place_goal_randomly();
+			that.repaint();
+			that.fill_path_to_goal_from(y, x);
+
 			console.log(that.possible_actions(y, x));
 			console.log(that.maximum_neighbor(that.value_matrix, y, x));
 		});
@@ -577,7 +582,38 @@ class DP {
 		}
 		request.send();	
 	}
+	repaint() {
+		let radios = document.getElementsByName("matrices_options");
+		let draw_checked = document.getElementById("draw_checked_input");
 
+		console.log("Repaint!");
+		iter.clear_and_draw_buffer();
+
+		for(const radio of radios) {
+			console.log(radio.id);
+			if(radio.checked) {
+				radio.parentNode.classList.add("active");
+				if(radio.id == "value_option") {
+					iter.fill_value_matrix();
+					if(draw_checked.checked) {
+						iter.draw_value_matrix();
+					}
+				}
+				if(radio.id == "reward_option") {
+					iter.fill_reward_matrix();
+					if(draw_checked.checked) {
+						iter.draw_value_matrix();
+					}
+				}
+				if(radio.id == "none_option") {
+				}
+			}
+			else {
+				radio.parentNode.classList.remove("active");
+			}
+		}
+	}
+	
 	// static method
 	copy_matrix(src, dst) {
 		let n = src.length;
@@ -648,6 +684,7 @@ var controller = {
 	"cols_input": document.getElementById("cols_input"),
 	"new_maze_animation": document.getElementById("new_maze_animation"),
 	"matrices_options_group": document.getElementById("matrices_options_group"),
+	"draw_checked_input": document.getElementById("draw_checked_input"),
 	"iteration_number_input": document.getElementById("iteration_number_input"),
 	"converge_button": document.getElementById("converge_button"),
 	"iteration_button": document.getElementById("iteration_button"),
@@ -659,39 +696,19 @@ controller.new_maze_button.addEventListener("click", function(e) {
 	console.log("r: " + r + ", c: " + c);
 	iter.request_json_maze(r, c);
 });
-controller.matrices_options_group.addEventListener("change", function(e) {
-	e.preventDefault();
-	let radios= document.getElementsByName("matrices_options");
-	for(const radio of radios) {
-		console.log(radio.id);
-		if(radio.checked) {
-			if(radio.id == "value_option") {
-				//DP.clear_canvas(iter.canvas);
-				iter.clear_and_draw_buffer();
-				iter.fill_value_matrix();
-				iter.draw_value_matrix();
-			}
-			if(radio.id == "reward_option") {
-				//DP.clear_canvas(iter.canvas);
-				iter.clear_and_draw_buffer();
-				iter.fill_reward_matrix();
-				iter.draw_reward_matrix();
-			}
-			if(radio.id == "none_option") {
-				console.log("Clear!");
-				iter.clear_and_draw_buffer();
-			}
-		}
-	}
+controller.matrices_options_group.addEventListener("click", function(e) {
+	iter.repaint();
+});
+controller.draw_checked_input.addEventListener("change", function(e) {
+	iter.draw_value_matrix_on = this.checked;
+	iter.repaint();
 });
 controller.converge_button.addEventListener("click", function(e) {
-	e.preventDefault();
 	iter.fill_until_converge();
 });
 controller.iteration_button.addEventListener("click", function(e) {
-	e.preventDefault();
 	let i = parseInt(controller.iteration_number_input.value);
 	iter.iterations(i);
-	iter.fill_value_matrix();
-	iter.draw_value_matrix();
+
+	iter.repaint();
 });
