@@ -168,6 +168,19 @@ class DP {
 		
 		this.config.pathWidth = Math.floor(this.size / 2);
 	}
+	init_DOM(){
+		function set_checked_radios(radios, id) {
+			for(const radio of radios) {
+				console.log(radio.id);
+				if(radio.id == id) {
+					console.log("Id found.");
+					radio.checked = true;
+				}
+			}
+		}
+		let radios = document.getElementsByName("matrices_options");
+		set_checked_radios(radios, "none_option");
+	}
 	toggle_draw_value_matrix_on() {
 		this.draw_value_matrix_on = !this.draw_value_matrix_on;
 		this.clear_and_draw_buffer();
@@ -366,7 +379,7 @@ class DP {
 	}
 	iterations(n, gamma=1) {
 		for(let i = 1; i <= n; i++) {
-			this.copy_matrix(this.new_value_matrix, this.value_matrix);
+			DP.copy_matrix(this.new_value_matrix, this.value_matrix);
 			this.iteration(gamma);
 		}
 	}
@@ -374,7 +387,7 @@ class DP {
 		let I = 0;
 		this.iteration(1);
 		while(!DP.equal_matrix(this.value_matrix, this.new_value_matrix)) {
-			this.copy_matrix(this.new_value_matrix, this.value_matrix);
+			DP.copy_matrix(this.new_value_matrix, this.value_matrix);
 			this.iteration(1);
 			I++;
 		}
@@ -396,7 +409,7 @@ class DP {
 			let eq = DP.equal_matrix(that.value_matrix, that.new_value_matrix);
 			
 			if(!eq) {
-				that.copy_matrix(that.new_value_matrix, that.value_matrix);
+				DP.copy_matrix(that.new_value_matrix, that.value_matrix);
 				that.animation_request = requestAnimationFrame(helper);
 			}
 			else {
@@ -416,6 +429,15 @@ class DP {
 
 		context.lineWidth = this.config.pathWidth;
 
+		if(!DP.equal_matrix(this.value_matrix, this.new_value_matrix)
+		   || DP.is_zero_matrix(this.new_value_matrix)) {
+			alert("Il faut d'abord faire converger l'algorithme.");
+			return;
+		}
+		else {
+			console.log("L'algorithme a convergé.");
+		}
+		
 		function helper() {
 			//console.log('(i,j)=' + '(' + i + ',' + j + ')');
 			let current_x = (current_j + 1.5) * that.col_step;
@@ -442,9 +464,10 @@ class DP {
 			else {
 				//context.lineWidth = that.config.wallWidth;
 				//context.strokeStyle = sStyle;
+				that.stop_animation();
 			}
 		}
-		requestAnimationFrame(helper);
+		this.animation_request = requestAnimationFrame(helper);
 	}
 	maximum_neighbor(matrix, i, j) {
 		let actions = this.possible_actions(i, j);
@@ -461,7 +484,7 @@ class DP {
 		
 		return [max[1], max[2]];
 	}
-	stop_fill_until_converge () {
+	stop_animation () {
 		cancelAnimationFrame(this.animation_request);
 	}
 	// For animated maze creation
@@ -530,7 +553,7 @@ class DP {
 	action_one(i, j) {
 		this.reset_all();
 		this.place_goal(i, j);
-		this.stop_fill_until_converge();
+		this.stop_animation();
 		this.fill_until_converge();
 	}
 	action_two(i, j) {
@@ -615,7 +638,17 @@ class DP {
 	}
 	
 	// static method
-	copy_matrix(src, dst) {
+	static is_zero_matrix(matrix) {
+		for(let i = 0; i < matrix.length; i++) {
+			for(let j = 0; j < matrix[0].length; j++) {
+				if(!matrix[i][j] == 0) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	static copy_matrix(src, dst) {
 		let n = src.length;
 		
 		for(let i = 0; i < n; i++) {
@@ -690,7 +723,7 @@ var controller = {
 	"iteration_button": document.getElementById("iteration_button"),
 }
 controller.new_maze_button.addEventListener("click", function(e) {
-	e.preventDefault();
+	//e.preventDefault();
 	let r = parseInt(controller.rows_input.value);
 	let c = parseInt(controller.cols_input.value);
 	console.log("r: " + r + ", c: " + c);
@@ -704,9 +737,11 @@ controller.draw_checked_input.addEventListener("change", function(e) {
 	iter.repaint();
 });
 controller.converge_button.addEventListener("click", function(e) {
+	e.preventDefault();
 	iter.fill_until_converge();
 });
 controller.iteration_button.addEventListener("click", function(e) {
+	e.preventDefault();
 	let i = parseInt(controller.iteration_number_input.value);
 	iter.iterations(i);
 
