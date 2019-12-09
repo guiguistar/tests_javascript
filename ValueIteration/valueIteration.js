@@ -83,7 +83,6 @@ var str = ["6C6AAAEAAC6AC2EC686EC2EAAAAC2C",
 		   "793C3A86AAC5516953955697AAC695",
 		   "52C3AAA96C393A9696853969685569",
 		   "3ABAAAAA93AAAAA92BABAA92BAB938",]
-
 var codes = [  0x20,   
 			   0x2575, 
 			   0x2576, 
@@ -590,6 +589,8 @@ class DP {
 		let url = "http://www.lespursetdurs.fr/maze/?rows=" + rows + "&cols=" + cols +"&json";
 		let that = this;
 
+		console.log(url);
+		
 		request.open("GET", url, true);
 		request.responseType = "text";
 		request.onload = function(e) {
@@ -618,7 +619,7 @@ class DP {
 				if(radio.id == "reward_option") {
 					iter.fill_reward_matrix();
 					if(draw_checked.checked) {
-						iter.draw_value_matrix();
+						iter.draw_reward_matrix();
 					}
 				}
 				if(radio.id == "none_option") {
