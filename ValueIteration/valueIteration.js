@@ -149,9 +149,9 @@ class DP {
 		//this.place_goal_randomly(0);
 		this.place_goal(Math.floor(this.rows / 2), Math.floor(this.cols / 2));
 	}
-	init_sizes(canvas, coeff=0.8) {
+	init_sizes(canvas, coeff=0.6) {
 		let row_step = Math.floor(coeff * window.innerHeight / this.rows);
-		let row_cols = Math.floor(window.innerWidth  / this.cols);
+		let row_cols = Math.floor(coeff * window.innerWidth  / this.cols);
 		let context = canvas.getContext('2d');
 		
 		this.size = Math.min(row_step, row_cols);		
@@ -167,6 +167,15 @@ class DP {
 		
 		this.config.pathWidth = Math.floor(this.size / 2);
 	}
+	/* should init be set? */
+	init_DOM_goal_coordinates() {
+		let i = document.getElementById("i_goal");
+		let j = document.getElementById("j_goal");
+
+		i.innerText = this.i_goal;
+		j.innerText = this.j_goal;
+	}
+	/* Dead code */
 	init_DOM(){
 		function set_checked_radios(radios, id) {
 			for(const radio of radios) {
@@ -180,6 +189,7 @@ class DP {
 		let radios = document.getElementsByName("matrices_options");
 		set_checked_radios(radios, "none_option");
 	}
+	/* Dead code */
 	toggle_draw_value_matrix_on() {
 		this.draw_value_matrix_on = !this.draw_value_matrix_on;
 		this.clear_and_draw_buffer();
@@ -503,18 +513,22 @@ class DP {
 	}
 	place_goal(i, j) {
 		if(i >= 0 && i < this.rows && j >= 0 && j <= this.cols) {
+			this.i_goal = i;
+			this.j_goal = j;
 			this.reward_matrix[i][j] = 0;
+
+			this.init_DOM_goal_coordinates();
 		}
 		else {
 			console.log("Error during goal placement.");
 		}
 	}
 	place_goal_randomly(value = 0) {
-		this.i_goal = Math.floor(Math.random() * this.rows);
-		this.j_goal = Math.floor(Math.random() * this.cols);
+		let i = Math.floor(Math.random() * this.rows);
+		let j = Math.floor(Math.random() * this.cols);
 
 		console.log("Random goal: ", this.i_goal, this.j_goal);
-		this.reward_matrix[this.i_goal][this.j_goal] = value;
+		this.place_goal(i, j);
 	}
 	clear_and_draw_buffer() {
 		DP.clear_canvas(this.canvas);
@@ -572,6 +586,7 @@ class DP {
 
 		return [x, y]
 	}
+	/* Must be purified */
 	attach_listeners() {
 		let that = this;
 		this.canvas.addEventListener('mousedown', function(event) {
@@ -581,7 +596,7 @@ class DP {
 			that.action_two(y, x);
 			//that.action_three(y, x);
 			DP.reset_matrix(that.reward_matrix, -1);
-			that.place_goal_randomly();
+			//that.place_goal_randomly();
 			that.repaint();
 			that.fill_path_to_goal_from(y, x);
 
@@ -589,7 +604,12 @@ class DP {
 			console.log(that.maximum_neighbor(that.value_matrix, y, x));
 		});
 		this.canvas.addEventListener('mousemove', function(event) {
+			let x_span = document.getElementById('j_mouse');
+			let y_span = document.getElementById('i_mouse');
+			let [x, y] = that.coordinates_from_mouse_event(event);
 
+			x_span.innerText = x;
+			y_span.innerText = y;
 		});
 	}
 	request_json_maze(rows=15, cols=20) {

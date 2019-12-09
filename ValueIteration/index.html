@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="index.css">
-	<!--link rel="stylesheet"
+	<link rel="stylesheet"
 		  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
 		  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-		  crossorigin="anonymous"-->
+		  crossorigin="anonymous">
     <title>Value iteration</title>
   </head>
   <body>
@@ -17,7 +17,7 @@
 		<!--canvas id="test_canvas" width="640px" height="480px"></canvas-->
 	  </section>
 	  <section>
-		<h2>Value iteration</h2>
+		<h4>Value iteration</h4>
 		<form>
 		  <div>
 			<label for="iteration_number_input">Iterations</label>
@@ -32,7 +32,7 @@
 			Converge
 		  </button>
 		</form>
-		<h2>Maze</h2>
+		<h4>Maze</h4>
 		<form>
 		  <div class="form-group">
 			<label for="rows_input">Rows</label>
@@ -48,16 +48,16 @@
 		  </div>
 		  <button type="submit" class="btn btn-primary" id="new_maze_button">New maze</button>
 		</form>
-		<h2>Matrices</h2>
+		<h4>Matrices</h4>
 		<form id="matrices_options_group">
 		  <div class="btn-group btn-group-toggle" data-toggle="buttons">
-			<label class="btn btn-primary">
+			<label class="btn btn-secondary">
 			  <input type="radio" name="matrices_options" id="value_option" checked > Value
 			</label>
-			<label class="btn btn-primary">
+			<label class="btn btn-secondary">
 			  <input type="radio" name="matrices_options" id="reward_option" > Reward
 			</label>
-			<label class="btn btn-primary active">
+			<label class="btn btn-secondary active">
 			  <input type="radio" name="matrices_options" id="none_option" > None
 			</label>
 		  </div>
@@ -66,23 +66,25 @@
 		  <label for="draw_checked_input">values</label>
 		  <input type="checkbox" id="draw_checked_input">
 		</div>
-		<h2>Paths</h2>
-		<h2>Mouse</h2>
-		<p>i=<span id="mouse_i">?</span>,j=<span id="mouse_j">?</span></p>
+		<h4>Paths</h4>
+		<h4>Mouse
+		  i=<span id="i_mouse">?</span>,j=<span id="j_mouse">?</span>
+		</h4>
 		<form id="mouse_options_group">
 		  <div class="btn-group btn-group-toggle" data-toggle="buttons">
-			<label class="btn btn-primary">
+			<label class="btn btn-secondary active">
 			  <input type="radio" name="mouse_options"
 					 id="start_point_option" checked >
 			  Start point
 			</label>
-			<label class="btn btn-primary">
+			<label class="btn btn-secondary">
 			  <input type="radio" name="mouse_options"
 					 id="end_point_option" >
 			  End point
 			</label>
 		  </div>
 		</form>
+		<p>i_goal=<span id="i_goal">?</span>, j_goal=<span id="j_goal">?</span></p>
 		<button type="button" class="btn btn-primary" disabled >
 		  Reset
 		</button>

@@ -4,6 +4,10 @@ body {
 main {
 	display: flex;
 }
+section {
+	border: solid 1px;
+	padding: 5px;
+}
 canvas {
 	border: solid 1px;
 	border-color: 'black';
