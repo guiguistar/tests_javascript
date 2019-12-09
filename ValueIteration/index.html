@@ -67,7 +67,22 @@
 		  <input type="checkbox" id="draw_checked_input">
 		</div>
 		<h2>Paths</h2>
-		
+		<h2>Mouse</h2>
+		<p>i=<span id="mouse_i">?</span>,j=<span id="mouse_j">?</span></p>
+		<form id="mouse_options_group">
+		  <div class="btn-group btn-group-toggle" data-toggle="buttons">
+			<label class="btn btn-primary">
+			  <input type="radio" name="mouse_options"
+					 id="start_point_option" checked >
+			  Start point
+			</label>
+			<label class="btn btn-primary">
+			  <input type="radio" name="mouse_options"
+					 id="end_point_option" >
+			  End point
+			</label>
+		  </div>
+		</form>
 		<button type="button" class="btn btn-primary" disabled >
 		  Reset
 		</button>

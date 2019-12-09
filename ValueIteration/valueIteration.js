@@ -565,13 +565,18 @@ class DP {
 		//this.fill_value_matrix();
 		this.fill_path_to_goal_from(i, j);
 	}
+	coordinates_from_mouse_event(event) {
+		const rect = this.canvas.getBoundingClientRect();
+		const x = -1 + Math.floor((event.clientX - rect.left) / this.col_step);
+		const y = -1 + Math.floor((event.clientY - rect.top) / this.row_step);
+
+		return [x, y]
+	}
 	attach_listeners() {
 		let that = this;
 		this.canvas.addEventListener('mousedown', function(event) {
-			const rect = that.canvas.getBoundingClientRect();
-			const x = -1 + Math.floor((event.clientX - rect.left) / that.col_step);
-			const y = -1 + Math.floor((event.clientY - rect.top) / that.row_step);
-
+			let [x, y] = that.coordinates_from_mouse_event(event);
+			
 			//that.action_one(y, x);
 			that.action_two(y, x);
 			//that.action_three(y, x);
@@ -582,6 +587,9 @@ class DP {
 
 			console.log(that.possible_actions(y, x));
 			console.log(that.maximum_neighbor(that.value_matrix, y, x));
+		});
+		this.canvas.addEventListener('mousemove', function(event) {
+
 		});
 	}
 	request_json_maze(rows=15, cols=20) {
@@ -717,7 +725,7 @@ var controller = {
 	"iteration_button": document.getElementById("iteration_button"),
 }
 controller.new_maze_button.addEventListener("click", function(e) {
-	//e.preventDefault();
+	e.preventDefault();
 	let r = parseInt(controller.rows_input.value);
 	let c = parseInt(controller.cols_input.value);
 	console.log("r: " + r + ", c: " + c);
