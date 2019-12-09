@@ -150,7 +150,7 @@ class DP {
 		//this.place_goal_randomly(0);
 		this.place_goal(Math.floor(this.rows / 2), Math.floor(this.cols / 2));
 	}
-	init_sizes(canvas, coeff=0.5) {
+	init_sizes(canvas, coeff=0.8) {
 		let row_step = Math.floor(coeff * window.innerHeight / this.rows);
 		let row_cols = Math.floor(window.innerWidth  / this.cols);
 		let context = canvas.getContext('2d');
@@ -504,8 +504,6 @@ class DP {
 	}
 	place_goal(i, j) {
 		if(i >= 0 && i < this.rows && j >= 0 && j <= this.cols) {
-			console.log(i, j);
-			console.log(this.reward_matrix);
 			this.reward_matrix[i][j] = 0;
 		}
 		else {
@@ -525,10 +523,6 @@ class DP {
 	}
 	clear_grid(canvas) {
 		let context = canvas.getContext('2d');
-		
-		console.log(context.fillStyle);
-		console.log(context.strokeStyle);
-		console.log(this.config.clear_color);
 		
 		for(let i = 0; i < this.rows; i++) {
 			for(let j = 0; j < this.cols; j++) {
@@ -558,9 +552,9 @@ class DP {
 	}
 	action_two(i, j) {
 		console.log("i: " + i + " j: " + j);
-		console.log(this.value_matrix[i][j]);
-		console.log(this.reward_matrix[i][j]);
-		console.log(this.maximum_value(i, j, 1));
+		console.log("value: " + this.value_matrix[i][j]);
+		console.log("reward: " + this.reward_matrix[i][j]);
+		console.log("maximum: " + this.maximum_value(i, j, 1));
 	}
 	action_three(i, j) {
 		this.reset_all();
@@ -613,7 +607,6 @@ class DP {
 		iter.clear_and_draw_buffer();
 
 		for(const radio of radios) {
-			console.log(radio.id);
 			if(radio.checked) {
 				radio.parentNode.classList.add("active");
 				if(radio.id == "value_option") {
