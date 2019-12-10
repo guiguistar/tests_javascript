@@ -64,6 +64,7 @@ class DP {
 		//this.canvas.parentNode.insertBefore(this.buffer, this.canvas.nextSibling);
 		
 		this.draw_value_matrix_on = false;
+		this.new_maze_animation_on = false;
 		this.init_from_matrix(matrix);
 		this.attach_listeners();
 	}
@@ -95,7 +96,7 @@ class DP {
 		
 		this.log();
 
-		if(new_maze_animation.checked) {
+		if(this.new_maze_animation_on) {
 			this.remove_grid_and_iterate(0);
 		}
 		else {
@@ -726,6 +727,9 @@ controller.new_maze_button.addEventListener("click", function(e) {
 	let c = parseInt(controller.cols_input.value);
 	console.log("r: " + r + ", c: " + c);
 	iter.request_json_maze(r, c);
+});
+controller.new_maze_animation.addEventListener("change", function(e) {
+	iter.new_maze_animation_on = this.checked;
 });
 controller.matrices_options_group.addEventListener("click", function(e) {
 	iter.repaint();
