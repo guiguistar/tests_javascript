@@ -436,6 +436,8 @@ class DP {
 		let context = this.canvas.getContext('2d');
 		let sStyle = context.strokeStyle;
 
+		console.log(sStyle);
+		
 		context.lineWidth = this.config.pathWidth;
 
 		if(!DP.equal_matrix(this.value_matrix, this.new_value_matrix)
@@ -457,8 +459,7 @@ class DP {
 			let new_y = (new_i + 1.5) * that.row_step;
 
 			let context = that.canvas.getContext('2d');
-			
-			context.strokeStyle = DP.compute_color_from_value(that.value_matrix[new_i][new_j] + 180);
+			context.strokeStyle = DP.compute_color_from_value(that.value_matrix[new_i][new_j] + 180, 1);
 			//context.fillRect(j, i, 5, 5);
 			context.beginPath();
 			context.moveTo(current_x, current_y);
@@ -591,17 +592,30 @@ class DP {
 		let that = this;
 		this.canvas.addEventListener('mousedown', function(event) {
 			let [x, y] = that.coordinates_from_mouse_event(event);
-			
-			//that.action_one(y, x);
-			that.action_two(y, x);
-			//that.action_three(y, x);
-			DP.reset_matrix(that.reward_matrix, -1);
-			//that.place_goal_randomly();
-			that.repaint();
-			that.fill_path_to_goal_from(y, x);
+			let start_point = document.getElementById('start_point_option');
+			let end_point = document.getElementById('end_point_option');
 
-			console.log(that.possible_actions(y, x));
-			console.log(that.maximum_neighbor(that.value_matrix, y, x));
+			if(start_point.checked) {
+				console.log('Start point mode');
+				
+				that.action_two(y, x);
+				that.repaint();
+				that.fill_path_to_goal_from(y, x);
+				
+				console.log(that.possible_actions(y, x));
+				console.log(that.maximum_neighbor(that.value_matrix, y, x));
+			}
+			else if(end_point.checked) {
+				console.log('End point mode.');
+
+				DP.reset_matrix(that.reward_matrix, -1);
+				DP.reset_matrix(that.value_matrix, 0);
+				DP.reset_matrix(that.new_value_matrix, 0);
+
+				that.place_goal(y, x);
+					
+				that.repaint();
+			}
 		});
 		this.canvas.addEventListener('mousemove', function(event) {
 			let x_span = document.getElementById('j_mouse');
@@ -629,13 +643,18 @@ class DP {
 		request.send();	
 	}
 	repaint() {
-		let radios = document.getElementsByName("matrices_options");
+		let matrices_radios = document.getElementsByName("matrices_options");
 		let draw_checked = document.getElementById("draw_checked_input");
 
+		let context = this.canvas.getContext('2d');
 		console.log("Repaint!");
+		console.log(context.fillStyle, context.strokeStyle, context.lineWidth);
+		
+		context.lineWidth = this.config.wallWidth;
+		
 		iter.clear_and_draw_buffer();
 
-		for(const radio of radios) {
+		for(const radio of matrices_radios) {
 			if(radio.checked) {
 				radio.parentNode.classList.add("active");
 				if(radio.id == "value_option") {
@@ -691,9 +710,9 @@ class DP {
 		}
 		return matrix;
 	}	
-	static compute_color_from_value(value) {
+	static compute_color_from_value(value, alpha=1) {
 		//let color = 'hsl(240, 80%, ' + (100 + 0.5 * this.value_matrix[i][j]) + '%)';
-		let color = 'hsl(' + (360 - value) + ', 80%, 50%)';
+		let color = 'hsla(' + (360 - value) + ', 60%, 50%, ' + alpha +')';
 
 		return color;
 	}
@@ -743,6 +762,7 @@ var controller = {
 	"iteration_number_input": document.getElementById("iteration_number_input"),
 	"converge_button": document.getElementById("converge_button"),
 	"iteration_button": document.getElementById("iteration_button"),
+	"mouse_options_group": document.getElementById("mouse_options_group"),
 }
 controller.new_maze_button.addEventListener("click", function(e) {
 	e.preventDefault();
@@ -767,5 +787,18 @@ controller.iteration_button.addEventListener("click", function(e) {
 	let i = parseInt(controller.iteration_number_input.value);
 	iter.iterations(i);
 
+	iter.repaint();
+});
+controller.mouse_options_group.addEventListener("click", function(e) {
+	let mouse_radios = document.getElementsByName("mouse_options");
+
+	for(const radio of mouse_radios) {
+		if(radio.checked) {
+			radio.parentNode.classList.add("active");
+		}
+		else {
+			radio.parentNode.classList.remove("active");
+		}
+	}
 	iter.repaint();
 });
