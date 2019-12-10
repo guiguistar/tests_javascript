@@ -5,12 +5,12 @@ main {
 	display: flex;
 }
 section {
-	border: solid 1px;
+	/*border: solid 1px;*/
 	padding: 5px;
 }
 canvas {
-	border: solid 1px;
-	border-color: 'black';
+	/*border: solid 1px;*/
+	/*border-color: 'black';*/
 }
 input[type="number"] {
 	width: 5em;
