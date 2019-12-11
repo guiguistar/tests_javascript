@@ -14,7 +14,7 @@
 	  <section id="first_section">
 		<!--h1>Application of value  iteration</h1-->
 		<canvas id="main_canvas" width="640px" height="480px"></canvas>
-		<!--canvas id="test_canvas" width="640px" height="480px"></canvas-->
+		<img src="bellman_equation1.svg" alt="Bellman's equation">
 	  </section>
 	  <section>
 		<h4>Value iteration</h4>
@@ -44,27 +44,29 @@
 		  </div>
 		  <div>
 			<label for="new_maze_animation">animation</label>
-			<input type="checkbox" id="new_maze_animation" autocomplete="off">
+			<input type="checkbox" id="new_maze_animation"
+				   autocomplete="off">
 		  </div>
 		  <button type="submit" class="btn btn-primary" id="new_maze_button">New maze</button>
 		</form>
 		<h4>Matrices</h4>
 		<form id="matrices_options_group">
 		  <div class="btn-group btn-group-toggle" data-toggle="buttons">
-			<label class="btn btn-secondary">
-			  <input type="radio" name="matrices_options" id="value_option" checked > Value
+			<label class="btn btn-secondary active">
+			  <input type="radio" name="matrices_options" id="value_option" checked> Value
 			</label>
 			<label class="btn btn-secondary">
 			  <input type="radio" name="matrices_options" id="reward_option" > Reward
 			</label>
-			<label class="btn btn-secondary active">
+			<label class="btn btn-secondary">
 			  <input type="radio" name="matrices_options" id="none_option" > None
 			</label>
 		  </div>
 		</form>
 		<div>
 		  <label for="draw_checked_input">values</label>
-		  <input type="checkbox" id="draw_checked_input" autocomplete="off">
+		  <input type="checkbox" id="draw_checked_input"
+				 autocomplete="off" checked >
 		</div>
 		<!--h4>Paths</h4-->
 		<h4>Mouse

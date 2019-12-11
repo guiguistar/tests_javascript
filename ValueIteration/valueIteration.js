@@ -78,7 +78,7 @@ class DP {
 		this.buffer = document.createElement('canvas');
 		//this.canvas.parentNode.insertBefore(this.buffer, this.canvas.nextSibling);
 		
-		this.draw_value_matrix_on = false;
+		this.draw_value_matrix_on = true;
 		this.new_maze_animation_on = false;
 		this.init_from_matrix(matrix);
 		this.attach_listeners();
@@ -86,7 +86,8 @@ class DP {
 	init_from_matrix(matrix) {
 		this.config = {
 			wallWidth: 2,
-			pathWidth: 8, // modified by init_sizes
+			pathWidth: 4, // modified by init_sizes
+			pathWidthCoeff: 0.1,
 			goal_color: 'orange',
 			clear_color: 'white',
 		}
@@ -120,6 +121,7 @@ class DP {
 		
 		//this.place_goal_randomly(0);
 		this.place_goal(Math.floor(this.rows / 2), Math.floor(this.cols / 2));
+		this.repaint();
 	}
 	init_sizes(canvas, coeff=0.6) {
 		let row_step = Math.floor(coeff * window.innerHeight / this.rows);
@@ -137,7 +139,7 @@ class DP {
 		this.row_step = this.size;
 		this.col_step = this.size;
 		
-		this.config.pathWidth = Math.floor(this.size / 2);
+		this.config.pathWidth = Math.floor(this.size * this.config.pathWidthCoeff);
 	}
 	/* should init be set? */
 	init_DOM_goal_coordinates() {
@@ -159,7 +161,7 @@ class DP {
 			}
 		}
 		let radios = document.getElementsByName("matrices_options");
-		set_checked_radios(radios, "none_option");
+		set_checked_radios(radios, "value_option");
 	}
 	/* Dead code */
 	toggle_draw_value_matrix_on() {
@@ -624,21 +626,21 @@ class DP {
 		
 		context.lineWidth = this.config.wallWidth;
 		
-		iter.clear_and_draw_buffer();
+		this.clear_and_draw_buffer();
 
 		for(const radio of matrices_radios) {
 			if(radio.checked) {
 				radio.parentNode.classList.add("active");
 				if(radio.id == "value_option") {
-					iter.fill_value_matrix();
+					this.fill_value_matrix();
 					if(draw_checked.checked) {
-						iter.draw_value_matrix();
+						this.draw_value_matrix();
 					}
 				}
 				if(radio.id == "reward_option") {
-					iter.fill_reward_matrix();
+					this.fill_reward_matrix();
 					if(draw_checked.checked) {
-						iter.draw_reward_matrix();
+						this.draw_reward_matrix();
 					}
 				}
 				if(radio.id == "none_option") {
