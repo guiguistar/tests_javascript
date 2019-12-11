@@ -596,8 +596,14 @@ class DP {
 			let y_span = document.getElementById('i_mouse');
 			let [x, y] = that.coordinates_from_mouse_event(event);
 
+			let i_mi = document.getElementById("i_formula");
+			let j_mi = document.getElementById("j_formula");
+			
 			x_span.innerText = x;
 			y_span.innerText = y;
+
+			i_mi.innerHTML = y;
+			j_mi.innerHTML = x;
 		});
 	}
 	request_json_maze(rows=15, cols=20) {
