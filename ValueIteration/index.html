@@ -15,45 +15,9 @@
 		<!--h1>Application of value  iteration</h1-->
 		<canvas id="main_canvas" width="640px" height="480px"></canvas>
 		<img src="bellman_equation1.svg" alt="Bellman's equation">
-		<math>
-		  <mrow>
+		<div id="mathml_container">
+		  <math>
 			<mrow>
-			  <msup>
-				<mi>V</mi>
-				<mo>*</mo>
-			  </msup>
-			  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-			  <mfenced>
-				<mi id="i_formula">i</mi>
-				<mi id="j_formula">j</mi>
-			  </mfenced>
-			</mrow>
-			<mo>=</mo>
-			<mrow>
-			  <munder>
-				<mi>max</mi>
-				<mrow>
-				  <mi>u</mi>
-				  <mo>&isin;</mo>
-				  <mrow>
-					<mi>U</mi>
-					<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-					<mo>(</mo>
-					<mi>x</mi>
-					<mo>)</mo>					
-				  </mrow>
-				</mrow>
-			  </munder>
-			  <mo>(</mo>
-			  <mrow>
-				<mi>r</mi>
-				<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-				<mfenced>
-				  <mi>x</mi>
-				  <mi>u</mi>
-				</mfenced>
-			  </mrow>
-			  <mo>+</mo>
 			  <mrow>
 				<msup>
 				  <mi>V</mi>
@@ -61,20 +25,83 @@
 				</msup>
 				<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
 				<mfenced>
-				  <mrow>
-					<mi>&nu;</mi>
-					<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-					<mfenced>
-					  <mi>x</mi>
-					  <mi>u</mi>
-					</mfenced>
-				  </mrow>
+				  <mi id="i_formula">i</mi>
+				  <mi id="j_formula">j</mi>
 				</mfenced>
 			  </mrow>
-			  <mo>)</mo>
+			  <mo>=</mo>
+			  <mrow>
+				<munder>
+				  <mi>max</mi>
+				  <mrow>
+					<mi>u</mi>
+					<mo>&isin;</mo>
+					<mrow>
+					  <mi>U</mi>
+					  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+					  <mo>(</mo>
+					  <mi>x</mi>
+					  <mo>)</mo>					
+					</mrow>
+				  </mrow>
+				</munder>
+				<mo>(</mo>
+				<mrow>
+				  <mi>r</mi>
+				  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+				  <mfenced>
+					<mi>x</mi>
+					<mi>u</mi>
+				  </mfenced>
+				</mrow>
+				<mo>+</mo>
+				<mrow>
+				  <msup>
+					<mi>V</mi>
+					<mo>*</mo>
+				  </msup>
+				  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+				  <mfenced>
+					<mrow>
+					  <mi>&nu;</mi>
+					  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+					  <mfenced>
+						<mi>x</mi>
+						<mi>u</mi>
+					  </mfenced>
+					</mrow>
+				  </mfenced>
+				</mrow>
+				<mo>)</mo>
+			  </mrow>
 			</mrow>
-		  </mrow>
-		</math>
+		  </math>
+		  <br>
+		  <math>
+			<mrow>
+			  <mrow>
+				<mi>U</mi>
+				<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+				<mfenced>
+				  <mi>x</mi>
+				</mfenced>
+			  </mrow>
+			  <mo>=</mo>
+			  <mrow>
+				<mo>{</mo>
+				<mi id="mi_action_1">a</mi>
+				<mo>,</mo>
+				<mfenced open="" close ="">
+				  <mi id="mi_action_2">b</mi>
+				  <mi id="mi_action_3">c</mi>
+				  <mi id="mi_action_4">d</mi>
+				  <mi id="mi_action_5">e</mi>
+				</mfenced>
+				<mo>}</mo>
+			  </mrow>
+			</mrow>
+		  </math>
+		</div>
 	  </section>
 	  <section>
 		<h4>Value iteration</h4>

@@ -16,3 +16,9 @@ input[type="number"] {
 	width: 5em;
 	text-align: center;
 }
+#mathml_container {
+	font-size: x-large;
+}
+#mi_action_2 {
+	/*display: none;*/
+}
