@@ -19,6 +19,15 @@ input[type="number"] {
 #mathml_container {
 	font-size: x-large;
 }
-#mi_action_2 {
-	/*display: none;*/
+.hidden {
+	display: none;
+}
+.small-font {
+	font-size: small;
+}
+.x-small-font {
+	font-size: x-small;
+}
+.x-variable {
+	font-size: small;
 }

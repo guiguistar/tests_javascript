@@ -596,14 +596,29 @@ class DP {
 			let y_span = document.getElementById('i_mouse');
 			let [x, y] = that.coordinates_from_mouse_event(event);
 
-			let i_mi = document.getElementById("i_formula");
-			let j_mi = document.getElementById("j_formula");
+			//let mi_i = document.getElementById("mi_i_value");
+			//let mi_j = document.getElementById("mi_j_value");
+
+			let mi_i = document.getElementsByClassName("mi_i");
+			let mi_j = document.getElementsByClassName("mi_j");
+			
+			let mi_possible_actions = document.getElementById("mi_possible_actions");
+			let array_possible_actions = that.possible_actions(y, x);
 			
 			x_span.innerText = x;
 			y_span.innerText = y;
 
-			i_mi.innerHTML = y;
-			j_mi.innerHTML = x;
+			//mi_i.innerHTML = y;
+			//mi_j.innerHTML = x;
+			for(let mi of mi_i) {
+				mi.innerHTML = y;
+			}
+			for(let mi of mi_j) {
+				mi.innerHTML = x;
+			}
+			
+			console.log(array_possible_actions.join(","));
+			mi_possible_actions.textContent = array_possible_actions.join(",");
 		});
 	}
 	request_json_maze(rows=15, cols=20) {

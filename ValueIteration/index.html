@@ -17,71 +17,160 @@
 		<img src="bellman_equation1.svg" alt="Bellman's equation">
 		<div id="mathml_container">
 		  <math>
-			<mrow>
-			  <mrow>
-				<msup>
-				  <mi>V</mi>
-				  <mo>*</mo>
-				</msup>
-				<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-				<mfenced>
-				  <mi id="i_formula">i</mi>
-				  <mi id="j_formula">j</mi>
-				</mfenced>
-			  </mrow>
-			  <mo>=</mo>
-			  <mrow>
-				<munder>
-				  <mi>max</mi>
+			<mtable groupalign="{right center left}">
+			  <mtr>
+				<mtd>
 				  <mrow>
-					<mi>u</mi>
-					<mo>&isin;</mo>
 					<mrow>
-					  <mi>U</mi>
-					  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-					  <mo>(</mo>
-					  <mi>x</mi>
-					  <mo>)</mo>					
-					</mrow>
-				  </mrow>
-				</munder>
-				<mo>(</mo>
-				<mrow>
-				  <mi>r</mi>
-				  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-				  <mfenced>
-					<mi>x</mi>
-					<mi>u</mi>
-				  </mfenced>
-				</mrow>
-				<mo>+</mo>
-				<mrow>
-				  <msup>
-					<mi>V</mi>
-					<mo>*</mo>
-				  </msup>
-				  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-				  <mfenced>
-					<mrow>
-					  <mi>&nu;</mi>
+					  <msup>
+						<mi>V</mi>
+						<mo>*</mo>
+					  </msup>
 					  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
 					  <mfenced>
-						<mi>x</mi>
-						<mi>u</mi>
+						<mfenced class="x-variable">
+						  <mi id="mi_i_value" class="mi_i">i</mi>
+						  <mi id="mi_j_value" class="mi_j">j</mi>
+						</mfenced>
 					  </mfenced>
 					</mrow>
-				  </mfenced>
-				</mrow>
-				<mo>)</mo>
-			  </mrow>
-			</mrow>
+				</mtd>
+				<mtd>
+				  <mo>=</mo>
+				</mtd>
+				<mtd>
+					<mrow>
+					  <munder>
+						<mi>max</mi>
+						<mrow>
+						  <mi>u</mi>
+						  <mo>&isin;</mo>
+						  <mrow>
+							<mi>U</mi>
+							<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+							<mo>(</mo>
+							<mfenced class="x-variable">
+							  <mi class="mi_i">i</mi>
+							  <mi class="mi_j">j</mi>
+							</mfenced>
+							<mo>)</mo>					
+						  </mrow>
+						</mrow>
+					  </munder>
+					  <mo>{</mo>
+					  <mrow>
+						<mi>r</mi>
+						<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+						<mfenced>
+						  <mfenced class="x-variable">
+							<mi class="mi_i">i</mi>
+							<mi class="mi_j">j</mi>
+						  </mfenced>
+						  <mi>u</mi>
+						</mfenced>
+					  </mrow>
+					  <mo>+</mo>
+					  <mrow>
+						<msup>
+						  <mi>V</mi>
+						  <mo>*</mo>
+						</msup>
+						<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+						<mfenced>
+						  <mrow>
+							<mi>&nu;</mi>
+							<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+							<mfenced>
+ 							  <mfenced class="x-variable">
+								<mi class="mi_i">i</mi>
+								<mi class="mi_j">j</mi>
+							  </mfenced>
+							  <mi>u</mi>
+							</mfenced>
+						  </mrow>
+						</mfenced>
+					  </mrow>
+					  <mo>}</mo>
+					</mrow>
+				  </mrow>
+				</mtd>
+			  </mtr>
+			  <mtr>
+				<mtd>
+				  <mrow>
+					<mrow>
+					</mrow>
+				</mtd>
+				<mtd>
+				  <mo>=</mo>
+				</mtd>
+				<mtd>
+					<mrow>
+					  <munder>
+						<mi>max</mi>
+						<mrow>
+						  <mi>u</mi>
+						  <mo>&isin;</mo>
+						  <mrow>
+							<mo>{</mo>
+							<!--mfenced open="" close ="">
+							  <mi id="mi_action_1">a</mi>
+							  <mi id="mi_action_2">b</mi>
+							  <mi id="mi_action_3">c</mi>
+							  <mi id="mi_action_4">d</mi>
+							  <mi id="mi_action_5">e</mi>
+							</mfenced-->
+							  <mi id="mi_possible_actions" class="x-small-font"></mi>
+							<mo>}</mo>
+						  </mrow>
+						</mrow>
+					  </munder>
+					  <mo>{</mo>
+					  <mrow>
+						<mi>r</mi>
+						<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+						<mfenced>
+						  <mfenced class="x-variable">
+							<mi class="mi_i">i</mi>
+							<mi class="mi_j">j</mi>
+						  </mfenced>
+						  <mi>u</mi>
+						</mfenced>
+					  </mrow>
+					  <mo>+</mo>
+					  <mrow>
+						<msup>
+						  <mi>V</mi>
+						  <mo>*</mo>
+						</msup>
+						<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+						<mfenced>
+						  <mrow>
+							<mi>&nu;</mi>
+							<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+							<mfenced>
+							  <mfenced class="x-variable">
+								<mi class="mi_i">i</mi>
+								<mi class="mi_j">j</mi>
+							  </mfenced>
+							  <mi>u</mi>
+							</mfenced>
+						  </mrow>
+						</mfenced>
+					  </mrow>
+					  <mo>}</mo>
+					</mrow>
+				  </mrow>
+				</mtd>
+			  </mtr>
+			</mtable>
 		  </math>
-		  <br>
+		  <!--br>
 		  <math>
 			<mrow>
 			  <mrow>
 				<mi>U</mi>
-				<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+				<mo>&#x2061;</mo>
 				<mfenced>
 				  <mi>x</mi>
 				</mfenced>
@@ -100,7 +189,7 @@
 				<mo>}</mo>
 			  </mrow>
 			</mrow>
-		  </math>
+		  </math-->
 		</div>
 	  </section>
 	  <section>
