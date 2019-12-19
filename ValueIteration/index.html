@@ -10,189 +10,12 @@
     <title>Value iteration</title>
   </head>
   <body>
-    <main class="container d-flex justify-content-around">
-	  <section id="first_section">
-		<!--h1>Application of value  iteration</h1-->
+    <main class="container">
+	  <section id="first_section" class="float-left">
 		<canvas id="main_canvas" width="640px" height="480px"></canvas>
 		<img src="bellman_equation1.svg" alt="Bellman's equation">
-		<div id="mathml_container">
-		  <math>
-			<mtable groupalign="{right center left}">
-			  <mtr>
-				<mtd>
-				  <mrow>
-					<mrow>
-					  <msup>
-						<mi>V</mi>
-						<mo>*</mo>
-					  </msup>
-					  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-					  <mfenced>
-						<mfenced class="x-variable">
-						  <mi id="mi_i_value" class="mi_i">i</mi>
-						  <mi id="mi_j_value" class="mi_j">j</mi>
-						</mfenced>
-					  </mfenced>
-					</mrow>
-				</mtd>
-				<mtd>
-				  <mo>=</mo>
-				</mtd>
-				<mtd>
-					<mrow>
-					  <munder>
-						<mi>max</mi>
-						<mrow>
-						  <mi>u</mi>
-						  <mo>&isin;</mo>
-						  <mrow>
-							<mi>U</mi>
-							<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-							<mo>(</mo>
-							<mfenced class="x-variable">
-							  <mi class="mi_i">i</mi>
-							  <mi class="mi_j">j</mi>
-							</mfenced>
-							<mo>)</mo>					
-						  </mrow>
-						</mrow>
-					  </munder>
-					  <mo>{</mo>
-					  <mrow>
-						<mi>r</mi>
-						<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-						<mfenced>
-						  <mfenced class="x-variable">
-							<mi class="mi_i">i</mi>
-							<mi class="mi_j">j</mi>
-						  </mfenced>
-						  <mi>u</mi>
-						</mfenced>
-					  </mrow>
-					  <mo>+</mo>
-					  <mrow>
-						<msup>
-						  <mi>V</mi>
-						  <mo>*</mo>
-						</msup>
-						<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-						<mfenced>
-						  <mrow>
-							<mi>&nu;</mi>
-							<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-							<mfenced>
- 							  <mfenced class="x-variable">
-								<mi class="mi_i">i</mi>
-								<mi class="mi_j">j</mi>
-							  </mfenced>
-							  <mi>u</mi>
-							</mfenced>
-						  </mrow>
-						</mfenced>
-					  </mrow>
-					  <mo>}</mo>
-					</mrow>
-				  </mrow>
-				</mtd>
-			  </mtr>
-			  <mtr>
-				<mtd>
-				  <mrow>
-					<mrow>
-					</mrow>
-				</mtd>
-				<mtd>
-				  <mo>=</mo>
-				</mtd>
-				<mtd>
-					<mrow>
-					  <munder>
-						<mi>max</mi>
-						<mrow>
-						  <mi>u</mi>
-						  <mo>&isin;</mo>
-						  <mrow>
-							<mo>{</mo>
-							<!--mfenced open="" close ="">
-							  <mi id="mi_action_1">a</mi>
-							  <mi id="mi_action_2">b</mi>
-							  <mi id="mi_action_3">c</mi>
-							  <mi id="mi_action_4">d</mi>
-							  <mi id="mi_action_5">e</mi>
-							</mfenced-->
-							  <mi id="mi_possible_actions" class="x-small-font"></mi>
-							<mo>}</mo>
-						  </mrow>
-						</mrow>
-					  </munder>
-					  <mo>{</mo>
-					  <mrow>
-						<mi>r</mi>
-						<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-						<mfenced>
-						  <mfenced class="x-variable">
-							<mi class="mi_i">i</mi>
-							<mi class="mi_j">j</mi>
-						  </mfenced>
-						  <mi>u</mi>
-						</mfenced>
-					  </mrow>
-					  <mo>+</mo>
-					  <mrow>
-						<msup>
-						  <mi>V</mi>
-						  <mo>*</mo>
-						</msup>
-						<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-						<mfenced>
-						  <mrow>
-							<mi>&nu;</mi>
-							<mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
-							<mfenced>
-							  <mfenced class="x-variable">
-								<mi class="mi_i">i</mi>
-								<mi class="mi_j">j</mi>
-							  </mfenced>
-							  <mi>u</mi>
-							</mfenced>
-						  </mrow>
-						</mfenced>
-					  </mrow>
-					  <mo>}</mo>
-					</mrow>
-				  </mrow>
-				</mtd>
-			  </mtr>
-			</mtable>
-		  </math>
-		  <!--br>
-		  <math>
-			<mrow>
-			  <mrow>
-				<mi>U</mi>
-				<mo>&#x2061;</mo>
-				<mfenced>
-				  <mi>x</mi>
-				</mfenced>
-			  </mrow>
-			  <mo>=</mo>
-			  <mrow>
-				<mo>{</mo>
-				<mi id="mi_action_1">a</mi>
-				<mo>,</mo>
-				<mfenced open="" close ="">
-				  <mi id="mi_action_2">b</mi>
-				  <mi id="mi_action_3">c</mi>
-				  <mi id="mi_action_4">d</mi>
-				  <mi id="mi_action_5">e</mi>
-				</mfenced>
-				<mo>}</mo>
-			  </mrow>
-			</mrow>
-		  </math-->
-		</div>
 	  </section>
-	  <section>
+	  <section class="float-left">
 		<h4>Value iteration</h4>
 		<form>
 		  <div>
@@ -244,7 +67,6 @@
 		  <input type="checkbox" id="draw_checked_input"
 				 autocomplete="off" checked >
 		</div>
-		<!--h4>Paths</h4-->
 		<h4>Mouse
 		  i=<span id="i_mouse">?</span>,j=<span id="j_mouse">?</span>
 		</h4>
@@ -263,9 +85,152 @@
 		  </div>
 		</form>
 		<p>i_goal=<span id="i_goal">?</span>, j_goal=<span id="j_goal">?</span></p>
-		<!--button type="button" class="btn btn-primary" disabled >
-		  Reset
-		</button-->
+	  </section>
+	  <section class="float-left">
+		<div id="mathml_container">
+		  <math>
+			<mtable groupalign="{right center left}">
+			  <mtr>
+				<mtd>
+				  <mrow>
+					<mrow>
+					  <msup>
+						<mi>V</mi>
+						<mo>*</mo>
+					  </msup>
+					  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+					  <mfenced>
+						<mfenced class="x-variable">
+						  <mi id="mi_i_value" class="mi_i">i</mi>
+						  <mi id="mi_j_value" class="mi_j">j</mi>
+						</mfenced>
+					  </mfenced>
+					</mrow>
+				</mtd>
+				<mtd>
+				  <mo>=</mo>
+				</mtd>
+				<mtd>
+				  <mrow>
+					<munder>
+					  <mi>max</mi>
+					  <mrow>
+						<mi>u</mi>
+						<mo>&isin;</mo>
+						<mrow>
+						  <mi>U</mi>
+						  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+						  <mo>(</mo>
+						  <mfenced class="x-variable">
+							<mi class="mi_i">i</mi>
+							<mi class="mi_j">j</mi>
+						  </mfenced>
+						  <mo>)</mo>					
+						</mrow>
+					  </mrow>
+					</munder>
+					<mo>{</mo>
+					<mrow>
+					  <mi>r</mi>
+					  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+					  <mfenced>
+						<mfenced class="x-variable">
+						  <mi class="mi_i">i</mi>
+						  <mi class="mi_j">j</mi>
+						</mfenced>
+						<mi>u</mi>
+					  </mfenced>
+					</mrow>
+					<mo>+</mo>
+					<mrow>
+					  <msup>
+						<mi>V</mi>
+						<mo>*</mo>
+					  </msup>
+					  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+					  <mfenced>
+						<mrow>
+						  <mi>&nu;</mi>
+						  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+						  <mfenced>
+ 							<mfenced class="x-variable">
+							  <mi class="mi_i">i</mi>
+							  <mi class="mi_j">j</mi>
+							</mfenced>
+							<mi>u</mi>
+						  </mfenced>
+						</mrow>
+					  </mfenced>
+					</mrow>
+					<mo>}</mo>
+				  </mrow>
+				</mrow>
+				</mtd>
+			  </mtr>
+			  <mtr>
+				<mtd>
+				  <mrow>
+					<mrow>
+					</mrow>
+				</mtd>
+				<mtd>
+				  <mo>=</mo>
+				</mtd>
+				<mtd>
+				  <mrow>
+					<munder>
+					  <mi>max</mi>
+					  <mrow>
+						<mi>u</mi>
+						<mo>&isin;</mo>
+						<mrow>
+						  <mo>{</mo>
+						  <mi id="mi_possible_actions" class="x-small-font"></mi>
+						  <mo>}</mo>
+						</mrow>
+					  </mrow>
+					</munder>
+					<mo>{</mo>
+					<mrow>
+					  <mi>r</mi>
+					  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+					  <mfenced>
+						<mfenced class="x-variable">
+						  <mi class="mi_i">i</mi>
+						  <mi class="mi_j">j</mi>
+						</mfenced>
+						<mi>u</mi>
+					  </mfenced>
+					</mrow>
+					<mo>+</mo>
+					<mrow>
+					  <msup>
+						<mi>V</mi>
+						<mo>*</mo>
+					  </msup>
+					  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+					  <mfenced>
+						<mrow>
+						  <mi>&nu;</mi>
+						  <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+						  <mfenced>
+							<mfenced class="x-variable">
+							  <mi class="mi_i">i</mi>
+							  <mi class="mi_j">j</mi>
+							</mfenced>
+							<mi>u</mi>
+						  </mfenced>
+						</mrow>
+					  </mfenced>
+					</mrow>
+					<mo>}</mo>
+				  </mrow>
+				</mrow>
+				</mtd>
+			  </mtr>
+			</mtable>
+		  </math>
+		</div>
 	  </section>
 	</main>
 	<script src="valueIteration.js"></script>
