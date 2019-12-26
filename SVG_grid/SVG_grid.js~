@@ -1,0 +1,3 @@
+svg_element = document.createElement('svg');
+
+document.body.appendChild(svg_element);
