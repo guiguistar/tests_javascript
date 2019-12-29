@@ -14,48 +14,34 @@ var col_height = 30;
 var n = 5;
 var p = 10;
 
+function add_grid_element(parent, x_off_first, y_off_first, x_off, y_off, w, h, i, j) {
+	let element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+	element.setAttribute('x', x_off_first + (x_off + w) * j);
+	element.setAttribute('y', y_off_first + (y_off + h) * i);
+	element.setAttribute('width', w);
+	element.setAttribute('height', h);
+	
+	parent.appendChild(element);		
+}
+
 for(let i = 0; i < n; i++) {
 	for(let j = 0; j < p; j++) {
-		let row_element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-		row_element.setAttribute('x', col_width + (col_width + row_width) * j);
-		row_element.setAttribute('y', (row_height + col_height) * i);
-		row_element.setAttribute('width', row_width);
-		row_element.setAttribute('height', row_height);
-
-		svg_element.appendChild(row_element);		
-		
-		let col_element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-		col_element.setAttribute('x', (row_width + col_width) * j);
-		col_element.setAttribute('y', row_height + (row_height + col_height) * i);
-		col_element.setAttribute('width', col_width);
-		col_element.setAttribute('height', col_height);
-		
-		svg_element.appendChild(col_element);
+		add_grid_element(svg_element,
+						 col_width, 0, col_width, col_height, row_width, row_height, i, j);
+		add_grid_element(svg_element,
+						 0, row_height, row_width, row_height, col_width, col_height, i, j);
 	}
 }
 
 // Last row
 for(let j = 0; j < p; j++) {
-	let row_element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-	let i = n;
-	row_element.setAttribute('x', col_width + (col_width + row_width) * j);
-	row_element.setAttribute('y', (row_height + col_height) * i);
-	row_element.setAttribute('width', row_width);
-	row_element.setAttribute('height', row_height);
-
-	svg_element.appendChild(row_element);		
+	add_grid_element(svg_element,
+					 col_width, 0, col_width, col_height, row_width, row_height, n, j);
 }
 // Last col
 for(let i = 0; i < n; i++) {
-	let col_element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-	let j = p;
-	
-	col_element.setAttribute('x', (row_width + col_width) * j);
-	col_element.setAttribute('y', row_height + (row_height + col_height) * i);
-	col_element.setAttribute('width', col_width);
-	col_element.setAttribute('height', col_height);
-	
-	svg_element.appendChild(col_element);
+	add_grid_element(svg_element,
+					 0, row_height, row_width, row_height, col_width, col_height, i, p);
 }
 
 document.body.appendChild(svg_element);
