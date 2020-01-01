@@ -1,3 +1,13 @@
 svg {
 	fill: black;
 }
+
+.row {
+	fill: orange;
+}
+.col {
+	fill: blue;
+}
+.corner {
+	fill: pink;
+}
