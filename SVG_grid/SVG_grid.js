@@ -27,7 +27,7 @@ var maze_test = [[6,14,10,10,8,6,10,10,10,14,10,10,12,6,10,8,6,14,12,6,10,10,8,6
 const up_bit = 0b0001;
 const right_bit = 0b0010;
 const down_bit = 0b0100;
-const left_bit = 0b100;
+const left_bit = 0b1000;
 
 svg_element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 svg_element.setAttribute('width', 600);

@@ -1,15 +1,16 @@
 svg {
 	fill: black;
+	stroke: black;
 }
 
 .row {
-	fill: orange;
+	fill: black;
 }
 .col {
-	fill: blue;
+	fill: black;
 }
 .corner {
-	fill: pink;
+	fill: black
 }
 .hide {
 	display: none;
