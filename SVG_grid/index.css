@@ -5,20 +5,23 @@ svg {
 
 .row {
 	fill: black;
+	stroke: none;
 }
 .col {
 	fill: black;
+	stroke: none;
 }
 .corner {
-	fill: black
+	fill: black;
+	stroke: none;
 }
 .center {
 	fill: cyan;
-	stroke: cyan;
+	stroke: none;
 }
 .path {
-	fill: cyan;
-	stroke: cyan;
+	fill: magenta;
+	stroke: none;
 }
 .hide {
 	display: none;

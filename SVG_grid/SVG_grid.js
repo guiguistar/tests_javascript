@@ -124,12 +124,7 @@ function create_path(svg_el) {
 			let cy = i * (row_height + col_height) + row_height + col_height / 2;
 			let r = Math.min(col_width, row_height) / 2;
 
-			let path_width = r / 4
-			
-			center.setAttribute('cx', cx);
-			center.setAttribute('cy', cy);
-			center.setAttribute('r', r);
-			center.classList.add('center');
+			let path_width = r / 4;
 			
 			if(cell & up_bit) {
 				add_grid_element(svg_el,
@@ -144,6 +139,11 @@ function create_path(svg_el) {
 								 ['path']);				
 			}
 
+			center.setAttribute('cx', cx);
+			center.setAttribute('cy', cy);
+			center.setAttribute('r', r);
+			center.classList.add('center');
+			
 			svg_el.appendChild(center);
 		}
 	}
