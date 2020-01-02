@@ -12,6 +12,14 @@ svg {
 .corner {
 	fill: black
 }
+.center {
+	fill: cyan;
+	stroke: cyan;
+}
+.path {
+	fill: cyan;
+	stroke: cyan;
+}
 .hide {
 	display: none;
 }
