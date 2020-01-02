@@ -24,132 +24,153 @@ var maze_test = [[6,14,10,10,8,6,10,10,10,14,10,10,12,6,10,8,6,14,12,6,10,10,8,6
 				 [5,5,6,12,3,12,5,3,12,3,9,6,10,12,3,12,3,12,3,10,12,5,4,5,1,3,10,12,6,13],
 				 [3,11,9,3,10,9,3,10,11,10,10,9,2,11,8,3,10,11,10,8,3,11,9,3,10,10,10,11,9,1]];
 
-const up_bit = 0b0001;
-const right_bit = 0b0010;
-const down_bit = 0b0100;
-const left_bit = 0b1000;
+class Mazer {
+	constructor(maze) {
+		// class field not currently supported
+		this.up_bit = 0b0001;
+		this.right_bit = 0b0010;
+		this.down_bit = 0b0100;
+		this.left_bit = 0b1000;
 
-svg_element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-svg_element.setAttribute('width', 600);
-svg_element.setAttribute('height', 600);
+		this.row_width = 18;
+		this.row_height = 3;
+		this.col_width = 4;
+		this.col_height = 15;
+		
+		this.n = maze.length;
+		this.p = maze[0].length;
 
-var line_width = 5;
-var rect_width = 4;
-var rect_height = 1;
+		this.viewBox_width = this.p * (this.col_width + this.row_width) + this.col_width;
+		this.viewBox_height = this.n * (this.row_height + this.col_height) + this.row_height;
 
-var row_width = 18;
-var row_height = 3;
-var col_width = 4;
-var col_height = 15;
-
-var n = maze_test.length;
-var p = maze_test[0].length;
-
-function add_grid_element(parent, x_off_first, y_off_first, x_off, y_off, w, h, i, j, classList=[]) {
-	let element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-	
-	element.setAttribute('x', x_off_first + (x_off + w) * j);
-	element.setAttribute('y', y_off_first + (y_off + h) * i);
-	element.setAttribute('width', w);
-	element.setAttribute('height', h);
-
-	for(let c of classList) {
-		element.classList.add(c);
+		console.log(this.viewBox_width, this.viewBox_height);
 	}
-	element.classList.add('c' + i + '-' + j);
+	createSVG() {
+		let svg_element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		svg_element.setAttribute('width', this.viewBox_width);
+		svg_element.setAttribute('height', this.viewBox_height);
+		//svg_element.setAttribute('viewBox', '0 0 ' + this.viewBox_width + ' ' + this.viewBox_height); 
+
+		let grid = this.create_grid(svg_element);
+		this.make_maze(grid);
+		this.create_path(svg_element);
+
+		return svg_element;
+	}
+	add_grid_element(parent, x_off_first, y_off_first, x_off, y_off, w, h, i, j, classList=[]) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+		
+		element.setAttribute('x', x_off_first + (x_off + w) * j);
+		element.setAttribute('y', y_off_first + (y_off + h) * i);
+		element.setAttribute('width', w);
+		element.setAttribute('height', h);
+
+		for(let c of classList) {
+			element.classList.add(c);
+		}
+		element.classList.add('c' + i + '-' + j);
+		
+		parent.appendChild(element);
+
+		return element;
+	}
+	create_grid(svg_el) {
+		let grid = new Array();
+		for(let i = 0; i <= this.n; i++) {
+			grid.push(new Array());
+			for(let j = 0; j <= this.p; j++) {
+				grid[i].push(new Array());
+				let classList = [];
+				// row
+				classList = ['row'];
+				if(j == this.p) {
+					classList.push('hide');
+				}
+				grid[i][j].push(this.add_grid_element(svg_el,
+													  this.col_width, 0,
+													  this.col_width, this.col_height,
+													  this.row_width, this.row_height,
+													  i, j,
+													  classList));
+				// col
+				classList = ['col'];
+				if(i == this.n) {
+					classList.push('hide');
+				}
+				grid[i][j].push(this.add_grid_element(svg_el,
+													  0, this.row_height,
+													  this.row_width, this.row_height,
+													  this.col_width, this.col_height,
+													  i, j,
+													  classList));
+				// corner
+				classList = ['corner'];
+				grid[i][j].push(this.add_grid_element(svg_el,
+													  0, 0,
+													  this.row_width, this.col_height,
+													  this.col_width, this.row_height,
+													  i, j,
+													  classList));
+			}
+		}
+
+		return grid;
+	}
 	
-	parent.appendChild(element);
+	// remove proper walls
+	make_maze(grid) {
+		for(let i = 0; i < this.n; i++) {
+			for(let j = 0; j < this.p; j++) {
+				let cell = maze_test[i][j];
+				let [row, col, corner] = grid[i][j];
 
-	return element;
-}
-
-function create_grid(svg_el) {
-	let grid = new Array();
-	for(let i = 0; i <= n; i++) {
-		grid.push(new Array());
-		for(let j = 0; j <= p; j++) {
-			grid[i].push(new Array());
-			// row
-			classList = ['row'];
-			if(j == p) {
-				classList.push('hide');
+				if(cell & this.up_bit) {
+					row.classList.add('hide');
+				}
+				if(cell & this.left_bit) {
+					col.classList.add('hide');
+				}
 			}
-			grid[i][j].push(add_grid_element(svg_el,
-											 col_width, 0, col_width, col_height, row_width, row_height, i, j,
-											 classList));
-			// col
-			classList = ['col'];
-			if(i == n) {
-				classList.push('hide');
-			}
-			grid[i][j].push(add_grid_element(svg_el,
-											 0, row_height, row_width, row_height, col_width, col_height, i, j,
-											 classList));
-			// corner
-			classList = ['corner'];
-			grid[i][j].push(add_grid_element(svg_el,
-											 0, 0, row_width, col_height, col_width, row_height, i, j,
-											 classList));
 		}
 	}
 
-	return grid;
-}
-	
-// remove proper walls
-function make_maze(grid) {
-	for(let i = 0; i < n; i++) {
-		for(let j = 0; j < p; j++) {
-			let cell = maze_test[i][j];
-			let [row, col, corner] = grid[i][j];
+	// create the path
+	create_path(svg_el) {
+		for(let i = 0; i < this.n; i++) {
+			for(let j = 0; j < this.p; j++) {
+				let cell = maze_test[i][j];
 
-			if(cell & up_bit) {
-				row.classList.add('hide');
-			}
-			if(cell & left_bit) {
-				col.classList.add('hide');
+				let center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+				let cx = j * (this.col_width + this.row_width) + this.col_width + this.row_width / 2;
+				let cy = i * (this.row_height + this.col_height) + this.row_height + this.col_height / 2;
+				let r = Math.min(this.col_width, this.row_height) / 2;
+
+				let path_width = r / 4;
+				
+				if(cell & this.up_bit) {
+					this.add_grid_element(svg_el,
+										  cx - path_width / 2 , cy + r - (this.row_height + this.col_height),
+										  0, 0, path_width, this.col_height, 0, 0,
+										  ['path']);				
+				}
+				if(cell & this.right_bit) {
+					this.add_grid_element(svg_el,
+										  cx + r, cy - path_width / 2,
+										  0, 0, this.row_width, path_width, 0, 0,
+										  ['path']);				
+				}
+
+				center.setAttribute('cx', cx);
+				center.setAttribute('cy', cy);
+				center.setAttribute('r', r);
+				center.classList.add('center');
+				
+				svg_el.appendChild(center);
 			}
 		}
 	}
 }
 
-// create the path
-function create_path(svg_el) {
-	for(let i = 0; i < n; i++) {
-		for(let j = 0; j < p; j++) {
-			let cell = maze_test[i][j];
+m = new Mazer(maze_test);
 
-			let center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-			let cx = j * (col_width + row_width) + col_width + row_width / 2;
-			let cy = i * (row_height + col_height) + row_height + col_height / 2;
-			let r = Math.min(col_width, row_height) / 2;
-
-			let path_width = r / 4;
-			
-			if(cell & up_bit) {
-				add_grid_element(svg_el,
-								 cx - path_width / 2 , cy + r - (row_height + col_height),
-								 0, 0, path_width, col_height, 0, 0,
-								 ['path']);				
-			}
-			if(cell & right_bit) {
-				add_grid_element(svg_el,
-								 cx + r, cy - path_width / 2,
-								 0, 0, row_width, path_width, 0, 0,
-								 ['path']);				
-			}
-
-			center.setAttribute('cx', cx);
-			center.setAttribute('cy', cy);
-			center.setAttribute('r', r);
-			center.classList.add('center');
-			
-			svg_el.appendChild(center);
-		}
-	}
-}
-
-make_maze(create_grid(svg_element));
-create_path(svg_element);
-
-document.body.appendChild(svg_element);
+document.body.appendChild(m.createSVG());
