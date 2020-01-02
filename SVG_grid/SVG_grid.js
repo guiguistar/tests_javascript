@@ -58,53 +58,70 @@ function add_grid_element(parent, x_off_first, y_off_first, x_off, y_off, w, h, 
 	}
 	element.classList.add('c' + i + '-' + j);
 	
-	parent.appendChild(element);		
+	parent.appendChild(element);
+
+	return element;
 }
 
-for(let i = 0; i < n; i++) {
-	for(let j = 0; j < p; j++) {
-		// row
-		add_grid_element(svg_element,
-						 col_width, 0, col_width, col_height, row_width, row_height, i, j,
-						['row']);
-		// col
-		add_grid_element(svg_element,
-						 0, row_height, row_width, row_height, col_width, col_height, i, j,
-						 ['col']);
-		// corner
-		add_grid_element(svg_element,
-						 0, 0, row_width, col_height, col_width, row_height, i, j,
-						 ['corner']);		
+function create_grid() {
+	let grid = new Array();
+	for(let i = 0; i < n; i++) {
+		grid.push(new Array());
+		for(let j = 0; j < p; j++) {
+			grid[i].push(new Array());
+			// row
+			grid[i][j].push(add_grid_element(svg_element,
+											 col_width, 0, col_width, col_height, row_width, row_height, i, j,
+											 ['row']));
+			// col
+			grid[i][j].push(add_grid_element(svg_element,
+											 0, row_height, row_width, row_height, col_width, col_height, i, j,
+											 ['col']));
+			// corner
+			grid[i][j].push(add_grid_element(svg_element,
+											 0, 0, row_width, col_height, col_width, row_height, i, j,
+											 ['corner']));		
+		}
 	}
-}
 
-// Last row
-for(let j = 0; j < p; j++) {
-	// row
+	// Last row
+	grid.push(new Array());
+	for(let j = 0; j < p; j++) {
+		grid[n].push(new Array());
+		// row
+		grid[n][j].push(add_grid_element(svg_element,
+										 col_width, 0, col_width, col_height, row_width, row_height, n, j,
+										 ['row']));
+		// no col
+		grid[n][j].push(null);
+		
+		// corner
+		grid[n][j].push(add_grid_element(svg_element,
+										 0, 0, row_width, col_height, col_width, row_height, n, j,
+										 ['corner']));
+	}
+	// Last col
+	for(let i = 0; i < n; i++) {
+		grid[i].push(new Array());
+		
+		// no row
+		grid[i][p].push(null);
+		
+		// col
+		grid[i][p].push(add_grid_element(svg_element,
+										 0, row_height, row_width, row_height, col_width, col_height, i, p,
+										 ['col']));
+		// corner
+		grid[i][p].push(add_grid_element(svg_element,
+										 0, 0, row_width, col_height, col_width, row_height, i, p,
+										 ['corner']));
+	}
+	// last corner
 	add_grid_element(svg_element,
-					 col_width, 0, col_width, col_height, row_width, row_height, n, j,
-					['row']);
-	// corner
-	add_grid_element(svg_element,
-					 0, 0, row_width, col_height, col_width, row_height, n, j,
-					 ['corner']);		
-}
-// Last col
-for(let i = 0; i < n; i++) {
-	// col
-	add_grid_element(svg_element,
-					 0, row_height, row_width, row_height, col_width, col_height, i, p,
-					['col']);
-	// corner
-	add_grid_element(svg_element,
-					 0, 0, row_width, col_height, col_width, row_height, i, p,
+					 0, 0, row_width, col_height, col_width, row_height, n, p,
 					 ['corner']);
 }
-// last corner
-add_grid_element(svg_element,
-				 0, 0, row_width, col_height, col_width, row_height, n, p,
-				 ['corner']);
-
+	
 // remove proper walls
 function make_maze() {
 	for(let i = 0; i < n; i++) {
@@ -114,33 +131,24 @@ function make_maze() {
 
 			if(cell & up_bit) {
 				el = document.querySelector('.row.c' + i + '-' + j);
-				if(el) {
-					el.classList.add('hide');
-				}
-				console.log('up', el);
+				el.classList.add('hide');
 			}
 			if(cell & right_bit) {
 				el = document.querySelector('.col.c' + i + '-' + (j + 1));
-				if(el) {
-					el.classList.add('hide');
-				}
-				console.log('right', el);
+				el.classList.add('hide');
 			}
 			if(cell & down_bit) {
 				el = document.querySelector('.row.c' + (i + 1) + '-' + j);
-				if(el) {
-					el.classList.add('hide');
-				}
-				console.log('down', el);
+				el.classList.add('hide');
 			}
 			if(cell & left_bit) {
 				el = document.querySelector('.col.c' + i + '-' + j);
-				if(el) {
-					el.classList.add('hide');
-				}
-				console.log('left', el);
+				el.classList.add('hide');
 			}
 		}
 	}
 }
+
+create_grid();
+
 document.body.appendChild(svg_element);
