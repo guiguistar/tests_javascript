@@ -185,7 +185,8 @@ class Mazer {
 function request_new_maze (rows=10, cols=10) {
 	return new Promise(function (resolve, reject) {
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'http://www.lespursetdurs.fr/maze/?rows=' + rows + '&cols=' + cols +'&json');
+		xhr.open('GET', 'http://www.lespursetdurs.fr/maze/?rows=' +
+				 rows + '&cols=' + cols +'&json');
 		xhr.onload = function () {
 			if (this.status >= 200 && this.status < 300) {
 				resolve(xhr.response);
@@ -206,6 +207,9 @@ function request_new_maze (rows=10, cols=10) {
 	});
 }
 
-m = new Mazer(maze_test3);
+request_new_maze().then(function(response) {
+	maze = JSON.parse(response);
+	m = new Mazer(maze);
+	document.body.appendChild(m.createSVG());
+},null);
 
-document.body.appendChild(m.createSVG());
