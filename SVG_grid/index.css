@@ -1,28 +1,38 @@
+:root {
+	--green: rgb(50, 168, 82);
+	--red: rgb(168, 50 ,68);
+	--yellow: rgba(230, 217 , 41, 0.5);
+}
 svg {
 	fill: black;
 	stroke: black;
 }
 
 .row {
-	fill: black;
-	stroke: none;
+	fill: var(--red);
+	/*stroke: none;*/
+	stroke: var(--red);;
 }
 .col {
-	fill: black;
-	stroke: none;
+	fill: var(--red);
+	/*stroke: none;*/
+	stroke: var(--red);;
 }
 .corner {
-	fill: black;
-	stroke: none;
+	fill: var(--red);
+	/*stroke: none;*/
+	stroke: var(--red);;
 }
 .center {
-	fill: cyan;
+	fill: var(--green);
 	stroke: none;
 }
 .path {
-	fill: magenta;
+	fill: var(--green);
 	stroke: none;
 }
 .hide {
-	display: none;
+	/*display: none;*/
+	/*fill: var(--yellow);*/
+	opacity: 0.2
 }

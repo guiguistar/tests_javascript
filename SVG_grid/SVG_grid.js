@@ -33,7 +33,7 @@ class Mazer {
 		this.left_bit = 0b1000;
 
 		this.row_width = 18;
-		this.row_height = 3;
+		this.row_height = 4;
 		this.col_width = 4;
 		this.col_height = 15;
 		
@@ -43,6 +43,9 @@ class Mazer {
 		this.viewBox_width = this.p * (this.col_width + this.row_width) + this.col_width;
 		this.viewBox_height = this.n * (this.row_height + this.col_height) + this.row_height;
 
+		this.r = 3;
+		this.path_width = 2;
+		
 		console.log(this.viewBox_width, this.viewBox_height);
 	}
 	createSVG() {
@@ -143,26 +146,23 @@ class Mazer {
 				let center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
 				let cx = j * (this.col_width + this.row_width) + this.col_width + this.row_width / 2;
 				let cy = i * (this.row_height + this.col_height) + this.row_height + this.col_height / 2;
-				let r = Math.min(this.col_width, this.row_height) / 2;
-
-				let path_width = r / 4;
 				
 				if(cell & this.up_bit) {
 					this.add_grid_element(svg_el,
-										  cx - path_width / 2 , cy + r - (this.row_height + this.col_height),
-										  0, 0, path_width, this.col_height, 0, 0,
+										  cx - this.path_width / 2 , cy + this.r - (this.row_height + this.col_height),
+										  0, 0, this.path_width, this.col_height, 0, 0,
 										  ['path']);				
 				}
 				if(cell & this.right_bit) {
 					this.add_grid_element(svg_el,
-										  cx + r, cy - path_width / 2,
-										  0, 0, this.row_width, path_width, 0, 0,
+										  cx + this.r, cy - this.path_width / 2,
+										  0, 0, this.row_width, this.path_width, 0, 0,
 										  ['path']);				
 				}
 
 				center.setAttribute('cx', cx);
 				center.setAttribute('cy', cy);
-				center.setAttribute('r', r);
+				center.setAttribute('r', this.r);
 				center.classList.add('center');
 				
 				svg_el.appendChild(center);
