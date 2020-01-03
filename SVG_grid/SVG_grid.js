@@ -70,7 +70,7 @@ class Mazer {
 
 		return svg_element;
 	}
-	add_grid_element(parent, x_off_first, y_off_first, x_off, y_off, w, h, i, j, classList=[]) {
+	add_grid_element(parent, x_off_first, y_off_first, x_off, y_off, w, h, i, j, classList=[], style_string='') {
 		let element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 		
 		element.setAttribute('x', x_off_first + (x_off + w) * j);
