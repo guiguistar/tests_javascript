@@ -64,10 +64,15 @@ class Mazer {
 		svg_element.setAttribute('height', this.viewBox_height);
 		//svg_element.setAttribute('viewBox', '0 0 ' + this.viewBox_width + ' ' + this.viewBox_height); 
 
-		let grid = this.create_grid(svg_element);
-		this.make_maze(grid);
-		this.create_path(svg_element);
+		let svg_maze_group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 
+		
+		let grid = this.create_grid(svg_maze_group);
+		this.make_maze(grid);
+		//this.create_path(svg_element);
+
+		svg_element.appendChild(svg_maze_group);
+		
 		return svg_element;
 	}
 	add_grid_element(parent, x_off_first, y_off_first, x_off, y_off, w, h, i, j, classList=[], style_string='') {
@@ -78,6 +83,8 @@ class Mazer {
 		element.setAttribute('width', w);
 		element.setAttribute('height', h);
 
+		//element.setAttribute('style', style_string);
+		
 		for(let c of classList) {
 			element.classList.add(c);
 		}
@@ -94,6 +101,7 @@ class Mazer {
 			for(let j = 0; j <= this.p; j++) {
 				grid[i].push(new Array());
 				let classList = [];
+				let style_string = 'fill: rgb(168, 50 ,68);';
 				// row
 				classList = ['row'];
 				if(j == this.p) {
@@ -104,7 +112,8 @@ class Mazer {
 													  this.col_width, this.col_height,
 													  this.row_width, this.row_height,
 													  i, j,
-													  classList));
+													  classList,
+													  style_string));
 				// col
 				classList = ['col'];
 				if(i == this.n) {
@@ -115,7 +124,8 @@ class Mazer {
 													  this.row_width, this.row_height,
 													  this.col_width, this.col_height,
 													  i, j,
-													  classList));
+													  classList,
+													  style_string));
 				// corner
 				classList = ['corner'];
 				grid[i][j].push(this.add_grid_element(svg_el,
@@ -123,7 +133,8 @@ class Mazer {
 													  this.row_width, this.col_height,
 													  this.col_width, this.row_height,
 													  i, j,
-													  classList));
+													  classList,
+													  style_string));
 			}
 		}
 
@@ -138,7 +149,7 @@ class Mazer {
 				let [row, col, corner] = grid[i][j];
 
 				if(cell & this.up_bit) {
-					row.classList.add('hide');
+					row.setAttribute('style', 'opacity: 0.2;');
 				}
 				if(cell & this.left_bit) {
 					col.classList.add('hide');
