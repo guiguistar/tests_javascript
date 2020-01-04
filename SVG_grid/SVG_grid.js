@@ -65,6 +65,7 @@ class Mazer {
 	}
 	createSVG(path=true) {
 		let svg_element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		svg_element.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 		svg_element.setAttribute('width', this.viewBox_width);
 		svg_element.setAttribute('height', this.viewBox_height);
 		//svg_element.setAttribute('viewBox', '0 0 ' + this.viewBox_width + ' ' + this.viewBox_height); 
