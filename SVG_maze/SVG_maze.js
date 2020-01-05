@@ -33,17 +33,21 @@ maze_test3 = [[0b0010, 0b1010, 0b1100],
 			  [0b0011, 0b1010, 0b1001]]
 
 class Mazer {
-	constructor(maze) {
+	constructor(maze, path=true) {
 		// class field not currently supported
 		this.up_bit = 0b0001;
 		this.right_bit = 0b0010;
 		this.down_bit = 0b0100;
 		this.left_bit = 0b1000;
 
-		this.row_width = 18;
-		this.row_height = 4;
-		this.col_width = 4;
-		this.col_height = 15;
+		this.coeff = 1;
+		this.row_width = this.coeff * 18;
+		this.row_height = this.coeff * 4;
+		this.col_width = this.coeff * 4;
+		this.col_height = this.coeff * 15;
+
+		this.r = this.coeff * 3;
+		this.path_width = this.coeff * 2;
 
 		this.maze = maze;
 		
@@ -53,21 +57,34 @@ class Mazer {
 		this.viewBox_width = this.p * (this.col_width + this.row_width) + this.col_width;
 		this.viewBox_height = this.n * (this.row_height + this.col_height) + this.row_height;
 
-		this.r = 3;
-		this.path_width = 2;
+		this.style_string_red = 'rgb(168, 50 ,68)';
+		this.style_string_green = 'rgb(50, 168, 82)';
+		this.style_string_hide = 'opacity: 0.2';
 		
 		console.log(this.viewBox_width, this.viewBox_height);
 	}
-	createSVG() {
+	createSVG(path=true) {
 		let svg_element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		svg_element.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 		svg_element.setAttribute('width', this.viewBox_width);
 		svg_element.setAttribute('height', this.viewBox_height);
 		//svg_element.setAttribute('viewBox', '0 0 ' + this.viewBox_width + ' ' + this.viewBox_height); 
 
-		let grid = this.create_grid(svg_element);
+		// the maze
+		let svg_maze_group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+		let grid = this.create_grid(svg_maze_group);
 		this.make_maze(grid);
-		this.create_path(svg_element);
+		svg_maze_group.setAttribute('style', 'fill: ' + this.style_string_red + ';');
+		svg_element.appendChild(svg_maze_group);
 
+		if(path) {
+			// the path
+			let svg_path_group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+			this.create_path(svg_path_group);
+			svg_path_group.setAttribute('style', 'fill: ' + this.style_string_green + ';');		
+			svg_element.appendChild(svg_path_group);
+		}
+		
 		return svg_element;
 	}
 	add_grid_element(parent, x_off_first, y_off_first, x_off, y_off, w, h, i, j, classList=[]) {
@@ -77,7 +94,7 @@ class Mazer {
 		element.setAttribute('y', y_off_first + (y_off + h) * i);
 		element.setAttribute('width', w);
 		element.setAttribute('height', h);
-
+		
 		for(let c of classList) {
 			element.classList.add(c);
 		}
@@ -138,10 +155,10 @@ class Mazer {
 				let [row, col, corner] = grid[i][j];
 
 				if(cell & this.up_bit) {
-					row.classList.add('hide');
+					row.setAttribute('style', this.style_string_hide);
 				}
 				if(cell & this.left_bit) {
-					col.classList.add('hide');
+					col.setAttribute('style', this.style_string_hide);
 				}
 			}
 		}
@@ -207,9 +224,10 @@ function request_new_maze (rows=10, cols=10) {
 	});
 }
 
-request_new_maze().then(function(response) {
+request_new_maze(10, 15).then(function(response) {
 	maze = JSON.parse(response);
+	/*maze = response;*/
 	m = new Mazer(maze);
-	document.body.appendChild(m.createSVG());
+	document.body.appendChild(m.createSVG(path=true));
 },null);
 
