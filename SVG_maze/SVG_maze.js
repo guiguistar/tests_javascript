@@ -40,11 +40,11 @@ class Mazer {
 		this.down_bit = 0b0100;
 		this.left_bit = 0b1000;
 
-		this.coeff = 1;
-		this.row_width = this.coeff * 18;
+		this.coeff = 10;
+		this.row_width = this.coeff * 16;
 		this.row_height = this.coeff * 4;
 		this.col_width = this.coeff * 4;
-		this.col_height = this.coeff * 15;
+		this.col_height = this.coeff * 16;
 
 		this.r = this.coeff * 3;
 		this.path_width = this.coeff * 2;
@@ -174,25 +174,24 @@ class Mazer {
 				let cx = j * (this.col_width + this.row_width) + this.col_width + this.row_width / 2;
 				let cy = i * (this.row_height + this.col_height) + this.row_height + this.col_height / 2;
 				
-				if(cell & this.up_bit) {
-					this.add_grid_element(svg_el,
-										  cx - this.path_width / 2 , cy + this.r - (this.row_height + this.col_height),
-										  0, 0, this.path_width, this.col_height, 0, 0,
-										  ['path']);				
-				}
-				if(cell & this.right_bit) {
-					this.add_grid_element(svg_el,
-										  cx + this.r, cy - this.path_width / 2,
-										  0, 0, this.row_width, this.path_width, 0, 0,
-										  ['path']);				
-				}
-
 				center.setAttribute('cx', cx);
 				center.setAttribute('cy', cy);
 				center.setAttribute('r', this.r);
 				center.classList.add('center');
 				
 				svg_el.appendChild(center);
+				if(cell & this.up_bit) {
+					this.add_grid_element(svg_el,
+										  cx - this.path_width / 2 , cy - (this.row_height + this.col_height),
+										  0, 0, this.path_width, this.col_height + this.row_height, 0, 0,
+										  ['path']);				
+				}
+				if(cell & this.right_bit) {
+					this.add_grid_element(svg_el,
+										  cx, cy - this.path_width / 2,
+										  0, 0, this.row_width + this.col_width, this.path_width, 0, 0,
+										  ['path']);				
+				}
 			}
 		}
 	}
@@ -227,7 +226,7 @@ function request_new_maze (rows=10, cols=10) {
 request_new_maze(10, 15).then(function(response) {
 	maze = JSON.parse(response);
 	/*maze = response;*/
-	m = new Mazer(maze);
+	m = new Mazer(maze_test2);
 	document.body.appendChild(m.createSVG(path=true));
 },null);
 
