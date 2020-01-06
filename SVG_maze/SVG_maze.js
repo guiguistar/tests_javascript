@@ -40,7 +40,7 @@ class Mazer {
 		this.down_bit = 0b0100;
 		this.left_bit = 0b1000;
 
-		this.coeff = 2;
+		this.coeff = 6;
 		this.row_width = this.coeff * 16;
 		this.row_height = this.coeff * 4;
 		this.col_width = this.coeff * 4;
@@ -224,7 +224,7 @@ function request_new_maze (rows=10, cols=10) {
 	});
 }
 
-request_new_maze(10, 15).then(function(response) {
+request_new_maze(5, 5).then(function(response) {
 	maze = JSON.parse(response);
 	/*maze = response;*/
 	m = new Mazer(maze);
