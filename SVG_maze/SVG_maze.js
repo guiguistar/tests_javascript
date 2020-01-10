@@ -33,28 +33,30 @@ maze_test3 = [[0b0010, 0b1010, 0b1100],
 			  [0b0011, 0b1010, 0b1001]]
 
 class Mazer {
-	constructor(maze, path=true) {
+	constructor(maze, path=true, width=640, height=640) {
 		// class field not currently supported
-		this.up_bit = 0b0001;
+		this.up_bit    = 0b0001;
 		this.right_bit = 0b0010;
-		this.down_bit = 0b0100;
-		this.left_bit = 0b1000;
+		this.down_bit  = 0b0100;
+		this.left_bit  = 0b1000;
 
-		this.coeff = 6;
-		this.row_width = this.coeff * 16;
-		this.row_height = this.coeff * 4;
-		this.col_width = this.coeff * 4;
-		this.col_height = this.coeff * 16;
-
-		this.r = this.coeff * 3;
-		this.path_width = this.coeff * 2;
-
-		this.maze = maze;
-		
 		this.n = maze.length;
 		this.p = maze[0].length;
 
-		this.viewBox_width = this.p * (this.col_width + this.row_width) + this.col_width;
+		this.ratio_path = 0.2
+
+		this.row_height = Math.round(this.ratio_path * (height / this.n));
+		this.col_width  = Math.round(this.ratio_path * (width  / this.p));
+
+		this.row_width  = Math.round((width  - (this.p + 1) * this.col_width ) / this.p);
+		this.col_height = Math.round((height - (this.n + 1) * this.row_height) / this.n);
+		
+		this.r = Math.min(this.row_height, this.col_width);
+		this.path_width = this.r;
+
+		this.maze = maze;
+		
+		this.viewBox_width  = this.p * (this.col_width  + this.row_width ) + this.col_width;
 		this.viewBox_height = this.n * (this.row_height + this.col_height) + this.row_height;
 
 		this.style_string_red = 'rgb(168, 50 ,68)';
@@ -222,6 +224,12 @@ function request_new_maze (rows=10, cols=10) {
 		};
 		xhr.send();
 	});
+}
+
+// Helper function to parse url
+function get(name){
+   if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+      return decodeURIComponent(name[1]);
 }
 
 request_new_maze(5, 5).then(function(response) {
