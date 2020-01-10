@@ -232,10 +232,38 @@ function get(name){
       return decodeURIComponent(name[1]);
 }
 
-request_new_maze(5, 5).then(function(response) {
+let f = (param, value) => !isNaN(param) ? param : value;
+
+function getRow() {
+	let row = get('row');
+	row = f(row, 5);
+	console.log('row', row);
+	return row;
+}
+function getCol() {
+	let col = get('col');
+	col = f(col);
+	console.log('col', col);
+	return col
+}
+function getWidth() {
+	let width = get('width');
+	width = f(width, 640);
+	console.log('width', width);
+	return width;
+}
+function getHeight() {
+	let height = get('height');
+	height = f(height);
+	console.log('height', height);
+	return height;
+}
+
+request_new_maze(getRow(), getCol()).then(function(response) {
 	maze = JSON.parse(response);
 	/*maze = response;*/
-	m = new Mazer(maze);
+	
+	m = new Mazer(maze, getWidth(), getHeight());
 	document.body.appendChild(m.createSVG(path=true));
 },null);
 
