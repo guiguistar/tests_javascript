@@ -33,7 +33,7 @@ maze_test3 = [[0b0010, 0b1010, 0b1100],
 			  [0b0011, 0b1010, 0b1001]]
 
 class Mazer {
-	constructor(maze, path=true, width=640, height=640) {
+	constructor(maze, width=640, height=640) {
 		// class field not currently supported
 		this.up_bit    = 0b0001;
 		this.right_bit = 0b0010;
@@ -44,21 +44,21 @@ class Mazer {
 		this.p = maze[0].length;
 
 		this.ratio_path = 0.2
-
+		
 		this.row_height = Math.round(this.ratio_path * (height / this.n));
 		this.col_width  = Math.round(this.ratio_path * (width  / this.p));
 
 		this.row_width  = Math.round((width  - (this.p + 1) * this.col_width ) / this.p);
 		this.col_height = Math.round((height - (this.n + 1) * this.row_height) / this.n);
 		
-		this.r = Math.min(this.row_height, this.col_width);
+		this.r = Math.min(this.row_height, this.col_width) / 2;
 		this.path_width = this.r;
 
 		this.maze = maze;
 		
 		this.viewBox_width  = this.p * (this.col_width  + this.row_width ) + this.col_width;
 		this.viewBox_height = this.n * (this.row_height + this.col_height) + this.row_height;
-
+		
 		this.style_string_red = 'rgb(168, 50 ,68)';
 		this.style_string_green = 'rgb(50, 168, 82)';
 		this.style_string_hide = 'opacity: 0.2';
@@ -232,10 +232,49 @@ function get(name){
       return decodeURIComponent(name[1]);
 }
 
-request_new_maze(5, 5).then(function(response) {
+let f = (param, value) => !isNaN(param) ? param : value;
+
+function getRow() {
+	let row = get('row');
+	row = f(row, 10);
+	console.log('row', row);
+	return row;
+}
+function getCol() {
+	let col = get('col');
+	col = f(col, 10);
+	console.log('col', col);
+	return col
+}
+function getWidth() {
+	let width = get('width');
+	width = f(width, 640);
+	console.log('width', width);
+	return width;
+}
+function getHeight() {
+	let height = get('height');
+	height = f(height, 640);
+	console.log('height', height);
+	return height;
+}
+function getPath() {
+	let path = get('path');
+
+	return path !=  'none';
+}
+
+request_new_maze(getRow(), getCol()).then(function(response) {
 	maze = JSON.parse(response);
 	/*maze = response;*/
-	m = new Mazer(maze);
-	document.body.appendChild(m.createSVG(path=true));
+
+	let W = getWidth();
+	let H = getHeight();
+	let P = getPath();
+
+	console.log('H', H, 'W', W, 'P', P);
+	
+	m = new Mazer(maze, W, H);
+	document.body.appendChild(m.createSVG(path=P));
 },null);
 
