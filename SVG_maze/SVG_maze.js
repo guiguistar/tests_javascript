@@ -44,14 +44,14 @@ class Mazer {
 		this.p = maze[0].length;
 
 		this.ratio_path = 0.2
-
+		
 		this.row_height = Math.round(this.ratio_path * (height / this.n));
 		this.col_width  = Math.round(this.ratio_path * (width  / this.p));
 
 		this.row_width  = Math.round((width  - (this.p + 1) * this.col_width ) / this.p);
 		this.col_height = Math.round((height - (this.n + 1) * this.row_height) / this.n);
 		
-		this.r = Math.min(this.row_height, this.col_width);
+		this.r = Math.min(this.row_height, this.col_width) / 2;
 		this.path_width = this.r;
 
 		this.maze = maze;
