@@ -83,7 +83,7 @@ class Mazer {
 			// the path
 			let svg_path_group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 			this.create_path(svg_path_group);
-			svg_path_group.setAttribute('style', 'fill: ' + this.style_string_green + ';');		
+			svg_path_group.setAttribute('style', 'fill: ' + this.style_string_green + ';stroke:none;');		
 			svg_element.appendChild(svg_path_group);
 		}
 		
@@ -181,8 +181,6 @@ class Mazer {
 				center.setAttribute('r', this.r);
 				center.classList.add('center');
 				
-				svg_el.appendChild(center);
-
 				if(cell & this.up_bit) {
 					this.add_grid_element(svg_el,
 										  cx - this.path_width / 2 , cy - (this.row_height + this.col_height),
@@ -195,6 +193,8 @@ class Mazer {
 										  0, 0, this.row_width + this.col_width, this.path_width, 0, 0,
 										  ['path']);				
 				}
+				
+				svg_el.appendChild(center);
 			}
 		}
 	}
