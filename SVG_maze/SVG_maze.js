@@ -204,7 +204,7 @@ class Mazer {
 function request_new_maze (rows=10, cols=10) {
 	return new Promise(function (resolve, reject) {
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'http://www.lespursetdurs.fr/maze/?rows=' +
+		xhr.open('GET', 'http://guillaumeroux.fr/maze/?rows=' +
 				 rows + '&cols=' + cols +'&json');
 		xhr.onload = function () {
 			if (this.status >= 200 && this.status < 300) {
